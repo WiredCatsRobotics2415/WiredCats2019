@@ -120,8 +120,8 @@ public class VelocityDrive extends Subsystem {
     rFront.setInverted(false);
     rBack.setInverted(false);
 
-    lBack.set(ControlMode.Follower, lFront.getDeviceID());
-    rBack.set(ControlMode.Follower, rFront.getDeviceID());
+    lFront.set(ControlMode.Follower, lFront.getDeviceID());
+    rFront.set(ControlMode.Follower, rFront.getDeviceID());
 
     lBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     rBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -163,8 +163,8 @@ public class VelocityDrive extends Subsystem {
    * @param right right motors's speedn (need to determine the unit to use)
    */
   public void setMotors(double left, double right) {
-    lFront.set(ControlMode.Velocity, left);
-    rFront.set(ControlMode.Velocity, right);
+    lBack.set(ControlMode.Velocity, left);
+    rBack.set(ControlMode.Velocity, right);
   }
 
   /**
