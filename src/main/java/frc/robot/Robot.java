@@ -7,9 +7,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.cheesy.CheesyDriveHelper;
+import frc.robot.subsystems.ArcadeDrive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,6 +28,12 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  public static XboxController gamepad;
+  public static Compressor compressor;
+  public static CheesyDriveHelper cheesyDriveHelper;
+
+  public static ArcadeDrive arcadeDrive;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -33,6 +43,14 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    gamepad = new XboxController(0);
+    compressor = new Compressor(20);
+
+    cheesyDriveHelper = new CheesyDriveHelper();
+
+    arcadeDrive = new ArcadeDrive();
+
   }
 
   /**
@@ -45,6 +63,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    
   }
 
   /**
@@ -93,6 +112,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    double leftY, rightX;
+    leftY = gamepad.getRawAxis(1);
+    rightX = gamepad.getRawAxis(4);
+
+    if (Math.abs(leftY) < Math.abs(arcadeDrive.DEADBAND)) leftY = 0;
+    if (Math.abs(rightX) < Math.abs(arcadeDrive.DEADBAND)) rightX = 0;
+
+    boolean isQuickTurn = leftY < 0.1;
+
+    arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
+
   }
 
   /**
