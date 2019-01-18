@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.cheesy.CheesyDriveHelper;
-import frc.robot.subsystems.ArcadeDrive;
+import frc.robot.subsystems.VelocityDrive;
+import frc.robot.util.DriveSignal;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -30,9 +30,8 @@ public class Robot extends TimedRobot {
 
   public static XboxController gamepad;
   public static Compressor compressor;
-  public static CheesyDriveHelper cheesyDriveHelper;
 
-  public static ArcadeDrive arcadeDrive;
+  public static VelocityDrive velocityDrive;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -47,10 +46,7 @@ public class Robot extends TimedRobot {
     gamepad = new XboxController(0);
     compressor = new Compressor(20);
 
-    cheesyDriveHelper = new CheesyDriveHelper();
-
-    arcadeDrive = new ArcadeDrive();
-
+    velocityDrive = new VelocityDrive();
   }
 
   /**
@@ -117,13 +113,11 @@ public class Robot extends TimedRobot {
     leftY = gamepad.getRawAxis(1);
     rightX = gamepad.getRawAxis(4);
 
-    if (Math.abs(leftY) < Math.abs(arcadeDrive.DEADBAND)) leftY = 0;
-    if (Math.abs(rightX) < Math.abs(arcadeDrive.DEADBAND)) rightX = 0;
+    if (Math.abs(leftY) < Math.abs(velocityDrive.DEADBAND)) leftY = 0;
+    if (Math.abs(rightX) < Math.abs(velocityDrive.DEADBAND)) rightX = 0;
 
     boolean isQuickTurn = leftY < 0.1;
-
-    arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
-
+    velocityDrive.drive(new DriveSignal(leftY, rightX, isQuickTurn));
   }
 
   /**

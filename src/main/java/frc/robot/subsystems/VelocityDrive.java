@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -16,12 +17,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
-import frc.robot.cheesy.DriveSignal;
+import frc.robot.util.DriveSignal;
 
 /**
  * Add your docs here.
  */
-public class ArcadeDrive extends Subsystem {
+public class VelocityDrive extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
@@ -29,10 +30,17 @@ public class ArcadeDrive extends Subsystem {
   public AHRS ahrs;
 
   private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
+  private final double MAX_SPEED = 1000; //need to define
+  
+  private final int kTimeoutMs = 30;
+  private final double KF = 0.0; //need to define
+  private final double KP = 0.0; //need to define
+  private final double KI = 0.0; //need to define
+  private final double KD = 0.0; //need to define
+
   public final double DEADBAND = 0.05;
 
-
-  public ArcadeDrive() {
+  public VelocityDrive() {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
@@ -47,21 +55,29 @@ public class ArcadeDrive extends Subsystem {
     lBack.set(ControlMode.Follower, lFront.getDeviceID());
     rBack.set(ControlMode.Follower, rFront.getDeviceID());
 
-    lFront.set(ControlMode.PercentOutput, 0);
-    rFront.set(ControlMode.PercentOutput, 0);
+    lBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    rBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
-    lFront.setNeutralMode(NeutralMode.Brake);
-    rFront.setNeutralMode(NeutralMode.Brake);
+    setBrakeMode(true);
 
+    lBack.config_kF(0, KF, kTimeoutMs);
+    lBack.config_kP(0, KP, kTimeoutMs);
+    lBack.config_kI(0, KI, kTimeoutMs);
+    lBack.config_kD(0, KD, kTimeoutMs);
+
+    rBack.config_kF(0, KF, kTimeoutMs);
+    rBack.config_kP(0, KP, kTimeoutMs);
+    rBack.config_kI(0, KI, kTimeoutMs);
+    rBack.config_kD(0, KD, kTimeoutMs);
   }
 
-  public void setMotors(double left, double right) {
-    lFront.set(left);
-    rFront.set(right);
+  private void setMotors(double left, double right) {
+    lFront.set(ControlMode.Velocity, left);
+    rFront.set(ControlMode.Velocity, right);
   }
 
   public void drive(DriveSignal signal) {
-    setMotors(signal.getLeft(), signal.getRight());
+    setMotors(signal.getLeft()*MAX_SPEED, signal.getRight()*MAX_SPEED);
   }
 
   public void zeroYaw() {
