@@ -71,7 +71,7 @@ public class VelocityDrive extends Subsystem {
     rBack.config_kD(0, KD, kTimeoutMs);
   }
 
-  private void setMotors(double left, double right) {
+  public void setMotors(double left, double right) {
     lFront.set(ControlMode.Velocity, left);
     rFront.set(ControlMode.Velocity, right);
   }
