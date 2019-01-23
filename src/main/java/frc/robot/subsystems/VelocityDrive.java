@@ -20,26 +20,42 @@ import frc.robot.RobotMap;
 import frc.robot.util.DriveSignal;
 
 /**
- * Add your docs here.
+ * Subsystem to control the drivetrain based on velocity
+ * @author Matthew Propp
  */
 public class VelocityDrive extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
-
+  /**
+   * The motors for the drivetrain
+   */
   private WPI_TalonSRX lFront, rFront, lBack, rBack;
+  /**
+   * Accelerometer
+   */
   public AHRS ahrs;
-
-  private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
+  /**
+   * A constant to hold the cirumference of the wheel in inches for distance calculations
+   */
+  private final double WHEEL_CIRCUMFERENCE = Math.PI * 8;
+  /**
+   * 
+   */
   private final double MAX_SPEED = 1000; //need to define
-  
+  /**
+   * Timeout constant for PIDF control in milliseconds
+   */
   private final int kTimeoutMs = 30;
-  private final double KF = 0.0; //need to define
-  private final double KP = 0.0; //need to define
-  private final double KI = 0.0; //need to define
-  private final double KD = 0.0; //need to define
-
+  /**
+   * PIDF constants for velocity control
+   */
+  private final double KF = 0.0, KP = 0.0, KI = 0.0, KD = 0.0;
+  /**
+   * Deadband constant used to enable quickturning
+   */
   public final double DEADBAND = 0.05;
 
+  /**
+   * Instantiates the talons and accelerometer and configures PIDF control
+   */
   public VelocityDrive() {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
@@ -71,23 +87,43 @@ public class VelocityDrive extends Subsystem {
     rBack.config_kD(0, KD, kTimeoutMs);
   }
 
+  /**
+   * set each the motors' speeds (need to determine the unit to use)
+   * @param left left motors's speedn (need to determine the unit to use)
+   * @param right
+   */
   public void setMotors(double left, double right) {
     lFront.set(ControlMode.Velocity, left);
     rFront.set(ControlMode.Velocity, right);
   }
 
+  /**
+   * Set the motors based on a drivesignal
+   * @param signal the drivesignal to set the motors to
+   */
   public void drive(DriveSignal signal) {
     setMotors(signal.getLeft()*MAX_SPEED, signal.getRight()*MAX_SPEED);
   }
 
+  /**
+   * zero out Yaw on the accelerometer
+   */
   public void zeroYaw() {
     ahrs.zeroYaw();
   }
 
+  /**
+   * get the yaw for the accelerometer
+   * @return the yaw for the accelerometer (need to find out unit)
+   */
   public double getYaw() {
     return ahrs.getYaw();
   }
   
+  /**
+   * set the brake mode for the motors
+   * @param brake true to turn on breaking, false will have the motors coast
+   */
   public void setBrakeMode(boolean brake) {
     if (brake) {
       lFront.setNeutralMode(NeutralMode.Brake);
