@@ -124,6 +124,8 @@ public class Robot extends TimedRobot {
 
     arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
 
+    // arcadeDrive.setMotors(leftY + rightX, leftY - rightX);
+
   }
 
   /**

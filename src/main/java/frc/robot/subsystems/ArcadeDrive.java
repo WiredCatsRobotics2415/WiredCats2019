@@ -25,7 +25,7 @@ public class ArcadeDrive extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private WPI_TalonSRX lFront, rFront, lBack, rBack;
+  private WPI_TalonSRX lFront, rFront, lBack, rBack, lMid, rMid;
   public AHRS ahrs;
 
   private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
@@ -35,6 +35,8 @@ public class ArcadeDrive extends Subsystem {
   public ArcadeDrive() {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
+    lMid = new WPI_TalonSRX(RobotMap.LEFT_TALON_MID);
+    rMid = new WPI_TalonSRX(RobotMap.RIGHT_TALON_MID);
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
@@ -46,6 +48,9 @@ public class ArcadeDrive extends Subsystem {
 
     lBack.set(ControlMode.Follower, lFront.getDeviceID());
     rBack.set(ControlMode.Follower, rFront.getDeviceID());
+
+    lMid.set(ControlMode.Follower, lFront.getDeviceID());
+    rMid.set(ControlMode.Follower, rFront.getDeviceID());
 
     lFront.set(ControlMode.PercentOutput, 0);
     rFront.set(ControlMode.PercentOutput, 0);
