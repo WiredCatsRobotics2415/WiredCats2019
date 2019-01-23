@@ -8,7 +8,7 @@
 package frc.robot;
 
 /**
- * Add your docs here.
+ * Class to hold device locations such as motor ports
  */
 public class RobotMap {
 
