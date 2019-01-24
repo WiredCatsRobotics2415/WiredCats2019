@@ -13,9 +13,12 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.RobotMap;
 import frc.robot.util.DriveSignal;
 
@@ -32,6 +35,38 @@ public class VelocityDrive extends Subsystem {
    * Accelerometer
    */
   public AHRS ahrs;
+  /**
+   * shuffleboard tab for PID tuning
+   */
+  private ShuffleboardTab manualPIDFTuner;
+  /**
+   * shuffleboard value for P for PID tuning
+   */
+  private NetworkTableEntry networkTableKP;
+  /**
+   * shuffleboard value for I for PID tuning
+   */
+  private NetworkTableEntry networkTableKI;
+  /**
+   * shuffleboard value for D for PID tuning
+   */
+  private NetworkTableEntry networkTableKD;
+  /**
+   * shuffleboard value for F for PID tuning
+   */
+  private NetworkTableEntry networkTableKF;
+  /**
+   * shuffleboard value the error of the left motors
+   */
+  private NetworkTableEntry leftPIDError;
+  /**
+   * shuffleboard value the error of the right motors
+   */
+  private NetworkTableEntry rightPIDError;
+  /**
+   * if pid tuning is being done
+   */
+  private boolean PIDFTuning;
   /**
    * A constant to hold the cirumference of the wheel in inches for distance calculations
    */
@@ -54,9 +89,17 @@ public class VelocityDrive extends Subsystem {
   public final double DEADBAND = 0.05;
 
   /**
-   * Instantiates the talons and accelerometer and configures PIDF control
+   * Instantiates the talons and accelerometer and configures PIDF control and sets PIDF tuning to false
    */
   public VelocityDrive() {
+    this(false);
+  }
+
+  /**
+   * Instantiates the talons and accelerometer and configures PIDF control and sets PIDF tuning to the parameter
+   * @param PIDFTuning if the PIDF varibles are being tuned from shuffleboard
+   */
+  public VelocityDrive(boolean PIDFTuning) {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
@@ -85,12 +128,30 @@ public class VelocityDrive extends Subsystem {
     rBack.config_kP(0, KP, kTimeoutMs);
     rBack.config_kI(0, KI, kTimeoutMs);
     rBack.config_kD(0, KD, kTimeoutMs);
+    this.PIDFTuning = PIDFTuning;
+    if(PIDFTuning) {
+      manualPIDFTuner = Shuffleboard.getTab("PIDF Tuner");
+      networkTableKP = manualPIDFTuner.add("KP", KP).getEntry();
+      networkTableKI = manualPIDFTuner.add("KI", KI).getEntry();
+      networkTableKD = manualPIDFTuner.add("KD", KD).getEntry();
+      networkTableKF = manualPIDFTuner.add("KF", KF).getEntry();
+      leftPIDError = manualPIDFTuner.add("Left PID Error", 0.0).getEntry();
+      rightPIDError = manualPIDFTuner.add("Right PID Error", 0.0).getEntry();
+    } else {
+      manualPIDFTuner = null;
+      networkTableKP = null;
+      networkTableKI = null;
+      networkTableKD = null;
+      networkTableKF = null;
+      leftPIDError = null;
+      rightPIDError = null;
+    }
   }
 
   /**
    * set each the motors' speeds (need to determine the unit to use)
    * @param left left motors's speedn (need to determine the unit to use)
-   * @param right
+   * @param right right motors's speedn (need to determine the unit to use)
    */
   public void setMotors(double left, double right) {
     lFront.set(ControlMode.Velocity, left);
@@ -102,6 +163,11 @@ public class VelocityDrive extends Subsystem {
    * @param signal the drivesignal to set the motors to
    */
   public void drive(DriveSignal signal) {
+    if(PIDFTuning) {
+      refreshPIDValuesNetworkTable();
+      leftPIDError.setDouble((double)lBack.getClosedLoopError());
+      rightPIDError.setDouble((double)rBack.getClosedLoopError());
+    }
     setMotors(signal.getLeft()*MAX_SPEED, signal.getRight()*MAX_SPEED);
   }
 
@@ -132,6 +198,39 @@ public class VelocityDrive extends Subsystem {
       lFront.setNeutralMode(NeutralMode.Coast);
       rFront.setNeutralMode(NeutralMode.Coast);
     }
+  }
+
+  /**
+   * refreshes PID parameters from shuffleboard
+   */
+  public void refreshPIDValuesNetworkTable() {
+    double KP = this.KP, KI = this.KI, KD = this.KD, KF = this.KF;
+    if(PIDFTuning) {
+      KP = networkTableKP.getDouble(KP);
+      KI = networkTableKP.getDouble(KP);
+      KD = networkTableKP.getDouble(KP);
+      KF = networkTableKP.getDouble(KP);
+      setPIDFConstants(KP, KI, KD, KF);
+    }
+  }
+
+  /**
+   * Set the parameters for PID control
+   * @param KP P parameter
+   * @param KI I parameter
+   * @param KD D parameter
+   * @param DF F parameter
+   */
+  public void setPIDFConstants(double KP, double KI, double KD, double KF) {
+    lBack.config_kF(0, KF, kTimeoutMs);
+    lBack.config_kP(0, KP, kTimeoutMs);
+    lBack.config_kI(0, KI, kTimeoutMs);
+    lBack.config_kD(0, KD, kTimeoutMs);
+
+    rBack.config_kF(0, KF, kTimeoutMs);
+    rBack.config_kP(0, KP, kTimeoutMs);
+    rBack.config_kI(0, KI, kTimeoutMs);
+    rBack.config_kD(0, KD, kTimeoutMs);
   }
 
   @Override
