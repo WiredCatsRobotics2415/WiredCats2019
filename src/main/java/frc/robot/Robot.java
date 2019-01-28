@@ -9,11 +9,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.cheesy.CheesyDriveHelper;
 import frc.robot.subsystems.ArcadeDrive;
+import frc.robot.subsystems.Intake;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -33,6 +35,7 @@ public class Robot extends TimedRobot {
   public static CheesyDriveHelper cheesyDriveHelper;
 
   public static ArcadeDrive arcadeDrive;
+  public static Intake intake;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -45,11 +48,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     gamepad = new XboxController(0);
-    compressor = new Compressor(20);
+    compressor = new Compressor(RobotMap.PCM_ID);
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
     arcadeDrive = new ArcadeDrive();
+    intake = new Intake();
 
   }
 
@@ -115,16 +119,22 @@ public class Robot extends TimedRobot {
 
     double leftY, rightX;
     leftY = gamepad.getRawAxis(1);
-    rightX = gamepad.getRawAxis(4);
+    rightX = -gamepad.getRawAxis(4);
 
     if (Math.abs(leftY) < Math.abs(arcadeDrive.DEADBAND)) leftY = 0;
     if (Math.abs(rightX) < Math.abs(arcadeDrive.DEADBAND)) rightX = 0;
 
-    boolean isQuickTurn = leftY < 0.1;
+    boolean isQuickTurn = Math.abs(leftY) < 0.1;
 
     arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
 
-    // arcadeDrive.setMotors(leftY + rightX, leftY - rightX);
+    if (gamepad.getBumperPressed(Hand.kLeft)) {
+      intake.intake();
+    } else if (gamepad.getBumperPressed(Hand.kRight)) {
+      intake.outtake();
+    } else {
+      intake.still();
+    }
 
   }
 

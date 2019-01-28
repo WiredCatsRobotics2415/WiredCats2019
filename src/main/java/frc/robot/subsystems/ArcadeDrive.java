@@ -40,11 +40,19 @@ public class ArcadeDrive extends Subsystem {
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
-    try {
-      ahrs = new AHRS(Port.kMXP);
-    } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-    }
+    // try {
+    //   ahrs = new AHRS(Port.kMXP);
+    // } catch (RuntimeException ex) {
+    //   DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
+    // }
+
+    lFront.setInverted(false);
+    lMid.setInverted(true);
+    lBack.setInverted(true);
+    rFront.setInverted(false);
+    rMid.setInverted(false);
+    rBack.setInverted(false);
+
 
     lBack.set(ControlMode.Follower, lFront.getDeviceID());
     rBack.set(ControlMode.Follower, rFront.getDeviceID());
@@ -59,6 +67,14 @@ public class ArcadeDrive extends Subsystem {
     rFront.setNeutralMode(NeutralMode.Brake);
 
   }
+
+  public void testMotor(double vel) {
+    lMid.set(vel);
+    lFront.set(vel);
+    lBack.set(vel);
+    // System.out.println("percentage"+lFront.getMotorOutputPercent());
+    // System.out.println("voltage"+lFront.getMotorOutputVoltage());
+    } 
 
   public void setMotors(double left, double right) {
     lFront.set(left);
