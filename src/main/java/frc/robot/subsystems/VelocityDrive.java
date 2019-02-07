@@ -64,15 +64,27 @@ public class VelocityDrive extends Subsystem {
    */
   private NetworkTableEntry rightPIDError;
   /**
+   * The distance from the front and back wheel to the center of gravity in inches
+   */
+  private double COFHorizontalFront, COFHorizontalBack, COFVertical;
+  /**
    * if pid tuning is being done
    */
   private boolean PIDFTuning;
+  /**
+   * if acceleration should be limited to prevent tipping
+   */
+  private boolean antiAccelereation;
   /**
    * A constant to hold the cirumference of the wheel in inches for distance calculations
    */
   private final double WHEEL_CIRCUMFERENCE = Math.PI * 8;
   /**
-   * 
+   * Encoder tick per rotation
+   */
+  private final double ENCODER_TICK_ROTATION = 4096;
+  /**
+   * ticks per 100ms;
    */
   private final double MAX_SPEED = 1000; //need to define
   /**
@@ -82,24 +94,25 @@ public class VelocityDrive extends Subsystem {
   /**
    * PIDF constants for velocity control
    */
-  private final double KF = 0.0, KP = 0.0, KI = 0.0, KD = 0.0;
+  private final double KF = 1023/MAX_SPEED, KP = 0.0, KI = 0.0, KD = 0.0;
   /**
    * Deadband constant used to enable quickturning
    */
+  private final double PERECENT_TO_TIP = 0.9;
   public final double DEADBAND = 0.05;
 
   /**
    * Instantiates the talons and accelerometer and configures PIDF control and sets PIDF tuning to false
    */
   public VelocityDrive() {
-    this(false);
+    this(false, true);
   }
 
   /**
    * Instantiates the talons and accelerometer and configures PIDF control and sets PIDF tuning to the parameter
    * @param PIDFTuning if the PIDF varibles are being tuned from shuffleboard
    */
-  public VelocityDrive(boolean PIDFTuning) {
+  public VelocityDrive(boolean PIDFTuning, boolean antiAccelereation) {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
@@ -146,6 +159,10 @@ public class VelocityDrive extends Subsystem {
       leftPIDError = null;
       rightPIDError = null;
     }
+    this.COFHorizontalFront = 15;
+    this.COFHorizontalBack = 15;
+    this.COFVertical = 15;
+    this.antiAccelereation = antiAccelereation;
   }
 
   /**
@@ -154,6 +171,24 @@ public class VelocityDrive extends Subsystem {
    * @param right right motors's speedn (need to determine the unit to use)
    */
   public void setMotors(double left, double right) {
+    if(antiAccelereation) {
+      double maxDecelForward = (((COFHorizontalBack/COFVertical)*386.4*PERECENT_TO_TIP)/(WHEEL_CIRCUMFERENCE*Math.PI)*ENCODER_TICK_ROTATION)/10;
+      double maxDecelBackward = (((COFHorizontalFront/COFVertical)*386.4*PERECENT_TO_TIP)/(WHEEL_CIRCUMFERENCE*Math.PI)*ENCODER_TICK_ROTATION)/10;
+      double accelerationL = left-lFront.getSelectedSensorVelocity();
+      double accelerationR = right-rFront.getSelectedSensorVelocity();
+      if(accelerationL > maxDecelForward) {
+        left = lFront.getSelectedSensorVelocity()+maxDecelForward;
+      }
+      if(accelerationL < maxDecelBackward) {
+        left = lFront.getSelectedSensorVelocity()+maxDecelBackward;
+      }
+      if(accelerationR > maxDecelForward) {
+        right = rFront.getSelectedSensorVelocity()+maxDecelForward;
+      }
+      if(accelerationR < maxDecelBackward) {
+        right = rFront.getSelectedSensorVelocity()+maxDecelBackward;
+      }
+    }
     lFront.set(ControlMode.Velocity, left);
     rFront.set(ControlMode.Velocity, right);
   }
@@ -231,6 +266,12 @@ public class VelocityDrive extends Subsystem {
     rBack.config_kP(0, KP, kTimeoutMs);
     rBack.config_kI(0, KI, kTimeoutMs);
     rBack.config_kD(0, KD, kTimeoutMs);
+  }
+
+  public void setCenterOfGravity(double COFHorizontalFront, double COFHorizontalBack, double COFVertical) {
+    this.COFHorizontalFront = COFHorizontalFront;
+    this.COFHorizontalBack = COFHorizontalBack;
+    this.COFVertical = COFVertical;
   }
 
   @Override

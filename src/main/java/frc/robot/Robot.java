@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
     gamepad = new XboxController(0);
     compressor = new Compressor(20);
 
-    velocityDrive = new VelocityDrive(true);
+    velocityDrive = new VelocityDrive(true, true);
   }
 
   /**
