@@ -80,7 +80,7 @@ public class VelocityDrive extends Subsystem {
   /**
    * ticks per 100ms;
    */
-  private final double MAX_SPEED = 1000;
+  private final double MAX_SPEED = 3628;
   /**
    * Timeout constant for PIDF control in milliseconds
    */
@@ -190,6 +190,7 @@ public class VelocityDrive extends Subsystem {
         maxSpeedLocal = Math.abs(rBack.getSelectedSensorVelocity());
       }
     }
+    System.out.println("hi bob");
     //setMotors(signal.getLeft()*MAX_SPEED, signal.getRight()*MAX_SPEED);
     lFront.set(ControlMode.PercentOutput, signal.getLeft());
     rFront.set(ControlMode.PercentOutput, signal.getRight());
@@ -229,7 +230,7 @@ public class VelocityDrive extends Subsystem {
    */
   public void refreshPIDValuesNetworkTable() {
     double KP = this.KP, KI = this.KI, KD = this.KD, KF = this.KF;
-    if(false) {//PIDFTuning) {
+    if(PIDFTuning) {
       KP = networkTableKP.getDouble(KP);
       KI = networkTableKI.getDouble(KI);
       KD = networkTableKD.getDouble(KD);
