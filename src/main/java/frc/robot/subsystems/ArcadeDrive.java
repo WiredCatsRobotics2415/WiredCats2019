@@ -35,8 +35,6 @@ public class ArcadeDrive extends Subsystem {
   public ArcadeDrive() {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
-    lMid = new WPI_TalonSRX(RobotMap.LEFT_TALON_MID);
-    rMid = new WPI_TalonSRX(RobotMap.RIGHT_TALON_MID);
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
@@ -46,19 +44,14 @@ public class ArcadeDrive extends Subsystem {
     //   DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
     // }
 
-    lFront.setInverted(false);
-    lMid.setInverted(true);
+    lFront.setInverted(true);
     lBack.setInverted(true);
     rFront.setInverted(false);
-    rMid.setInverted(false);
     rBack.setInverted(false);
 
 
     lBack.set(ControlMode.Follower, lFront.getDeviceID());
     rBack.set(ControlMode.Follower, rFront.getDeviceID());
-
-    lMid.set(ControlMode.Follower, lFront.getDeviceID());
-    rMid.set(ControlMode.Follower, rFront.getDeviceID());
 
     lFront.set(ControlMode.PercentOutput, 0);
     rFront.set(ControlMode.PercentOutput, 0);
@@ -69,9 +62,7 @@ public class ArcadeDrive extends Subsystem {
   }
 
   public void testMotor(double vel) {
-    lMid.set(vel);
     lFront.set(vel);
-    lBack.set(vel);
     // System.out.println("percentage"+lFront.getMotorOutputPercent());
     // System.out.println("voltage"+lFront.getMotorOutputVoltage());
     } 

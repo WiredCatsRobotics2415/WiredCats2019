@@ -15,11 +15,9 @@ public class RobotMap {
     public static final int PCM_ID = 20;
 
 	public static final int LEFT_TALON_BACK = 14; 
-	public static final int LEFT_TALON_FRONT = 10; 
-	public static final int LEFT_TALON_MID = 12;
+	public static final int LEFT_TALON_FRONT = 15; 
 	public static final int RIGHT_TALON_BACK = 1; 
-	public static final int RIGHT_TALON_FRONT = 5;
-	public static final int RIGHT_TALON_MID = 2;
+	public static final int RIGHT_TALON_FRONT = 3;
 
 	public static final int ELEVATOR_ONE = 6;
 	public static final int ELEVATOR_TWO = 6;

@@ -48,12 +48,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     gamepad = new XboxController(0);
-    compressor = new Compressor(RobotMap.PCM_ID);
+    //compressor = new Compressor(RobotMap.PCM_ID);
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
     arcadeDrive = new ArcadeDrive();
-    intake = new Intake();
+    //intake = new Intake();
 
   }
 
@@ -126,15 +126,15 @@ public class Robot extends TimedRobot {
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1;
 
-    arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
-
-    if (gamepad.getBumperPressed(Hand.kLeft)) {
+    arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+    //arcadeDrive.testMotor(1.0);;
+    /*if (gamepad.getBumperPressed(Hand.kLeft)) {
       intake.intake();
     } else if (gamepad.getBumperPressed(Hand.kRight)) {
       intake.outtake();
     } else {
       intake.still();
-    }
+    }*/
 
   }
 
