@@ -72,9 +72,13 @@ public class VelocityDrive extends Subsystem {
    */
   private final double WHEEL_CIRCUMFERENCE = Math.PI * 8;
   /**
-   * 
+   * Encoder tick per rotation
    */
-  private final double MAX_SPEED = 1000; //need to define
+  private final double ENCODER_TICK_ROTATION = 4096;
+  /**
+   * ticks per 100ms;
+   */
+  private final double MAX_SPEED = 1000;
   /**
    * Timeout constant for PIDF control in milliseconds
    */
@@ -82,7 +86,7 @@ public class VelocityDrive extends Subsystem {
   /**
    * PIDF constants for velocity control
    */
-  private final double KF = 0.0, KP = 0.0, KI = 0.0, KD = 0.0;
+  private final double KF = 1023/MAX_SPEED, KP = 0.0, KI = 0.0, KD = 0.0;
   /**
    * Deadband constant used to enable quickturning
    */
@@ -106,10 +110,15 @@ public class VelocityDrive extends Subsystem {
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
     try {
-      ahrs = new AHRS(Port.kMXP);
+      //ahrs = new AHRS(Port.kMXP);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
     }
+
+    lFront.setInverted(true);
+    lBack.setInverted(true);
+    rFront.setInverted(false);
+    rBack.setInverted(false);
 
     lBack.set(ControlMode.Follower, lFront.getDeviceID());
     rBack.set(ControlMode.Follower, rFront.getDeviceID());
@@ -207,9 +216,10 @@ public class VelocityDrive extends Subsystem {
     double KP = this.KP, KI = this.KI, KD = this.KD, KF = this.KF;
     if(PIDFTuning) {
       KP = networkTableKP.getDouble(KP);
-      KI = networkTableKP.getDouble(KP);
-      KD = networkTableKP.getDouble(KP);
-      KF = networkTableKP.getDouble(KP);
+      KI = networkTableKI.getDouble(KI);
+      KD = networkTableKD.getDouble(KD);
+      KF = networkTableKF.getDouble(KF);
+      
       setPIDFConstants(KP, KI, KD, KF);
     }
   }

@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     gamepad = new XboxController(0);
-    compressor = new Compressor(20);
+    //ompressor = new Compressor(20);
 
     velocityDrive = new VelocityDrive(true);
   }
@@ -123,7 +123,7 @@ public class Robot extends TimedRobot {
     if (Math.abs(leftY) < Math.abs(velocityDrive.DEADBAND)) leftY = 0;
     if (Math.abs(rightX) < Math.abs(velocityDrive.DEADBAND)) rightX = 0;
 
-    boolean isQuickTurn = leftY < 0.1;
+    boolean isQuickTurn = Math.abs(leftY) < 0.1;
     velocityDrive.drive(new DriveSignal(leftY, rightX, isQuickTurn));
   }
 
