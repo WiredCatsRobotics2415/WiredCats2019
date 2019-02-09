@@ -63,6 +63,8 @@ public class VelocityDrive extends Subsystem {
    * shuffleboard value the error of the right motors
    */
   private NetworkTableEntry rightPIDError;
+  private NetworkTableEntry maxSpeed;
+  private double maxSpeedLocal;
   /**
    * if pid tuning is being done
    */
@@ -138,6 +140,7 @@ public class VelocityDrive extends Subsystem {
     rBack.config_kI(0, KI, kTimeoutMs);
     rBack.config_kD(0, KD, kTimeoutMs);
     this.PIDFTuning = PIDFTuning;
+    this.maxSpeedLocal = 0.0;
     if(PIDFTuning) {
       manualPIDFTuner = Shuffleboard.getTab("PIDF Tuner");
       networkTableKP = manualPIDFTuner.add("KP", KP).getEntry();
@@ -146,6 +149,7 @@ public class VelocityDrive extends Subsystem {
       networkTableKF = manualPIDFTuner.add("KF", KF).getEntry();
       leftPIDError = manualPIDFTuner.add("Left PID Error", 0.0).getEntry();
       rightPIDError = manualPIDFTuner.add("Right PID Error", 0.0).getEntry();
+      maxSpeed = manualPIDFTuner.add("Max Speed", 0.0).getEntry();
     } else {
       manualPIDFTuner = null;
       networkTableKP = null;
@@ -154,6 +158,7 @@ public class VelocityDrive extends Subsystem {
       networkTableKF = null;
       leftPIDError = null;
       rightPIDError = null;
+      maxSpeed = null;
     }
   }
 
@@ -176,8 +181,18 @@ public class VelocityDrive extends Subsystem {
       refreshPIDValuesNetworkTable();
       leftPIDError.setDouble((double)lBack.getClosedLoopError());
       rightPIDError.setDouble((double)rBack.getClosedLoopError());
+      if(Math.abs(rBack.getSelectedSensorVelocity()) > maxSpeedLocal) {
+        maxSpeed.setDouble(Math.abs(rBack.getSelectedSensorVelocity()));
+        maxSpeedLocal = Math.abs(rBack.getSelectedSensorVelocity());
+      }
+      if(Math.abs(lBack.getSelectedSensorVelocity()) > maxSpeedLocal) {
+        maxSpeed.setDouble(Math.abs(lBack.getSelectedSensorVelocity()));
+        maxSpeedLocal = Math.abs(rBack.getSelectedSensorVelocity());
+      }
     }
-    setMotors(signal.getLeft()*MAX_SPEED, signal.getRight()*MAX_SPEED);
+    //setMotors(signal.getLeft()*MAX_SPEED, signal.getRight()*MAX_SPEED);
+    lFront.set(ControlMode.PercentOutput, signal.getLeft());
+    rFront.set(ControlMode.PercentOutput, signal.getRight());
   }
 
   /**
@@ -214,7 +229,7 @@ public class VelocityDrive extends Subsystem {
    */
   public void refreshPIDValuesNetworkTable() {
     double KP = this.KP, KI = this.KI, KD = this.KD, KF = this.KF;
-    if(PIDFTuning) {
+    if(false) {//PIDFTuning) {
       KP = networkTableKP.getDouble(KP);
       KI = networkTableKI.getDouble(KI);
       KD = networkTableKD.getDouble(KD);
