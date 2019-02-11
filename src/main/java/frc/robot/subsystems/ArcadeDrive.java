@@ -60,19 +60,16 @@ public class ArcadeDrive extends Subsystem {
     lBack.set(ControlMode.PercentOutput, 0);
     rBack.set(ControlMode.PercentOutput, 0);
 
-    lBack.setNeutralMode(NeutralMode.Brake);
-    rBack.setNeutralMode(NeutralMode.Brake);
-
-    /*lFront.set(ControlMode.PercentOutput, 0);
+    lFront.set(ControlMode.PercentOutput, 0);
     rFront.set(ControlMode.PercentOutput, 0);
 
     lFront.setNeutralMode(NeutralMode.Coast);
-    rFront.setNeutralMode(NeutralMode.Coast);*/
+    rFront.setNeutralMode(NeutralMode.Coast);
 
   }
 
   public void testMotor(double vel) {
-    rBack.set(vel);
+    lFront.set(vel);
     // System.out.println("percentage"+lFront.getMotorOutputPercent());
     // System.out.println("voltage"+lFront.getMotorOutputVoltage());
     } 

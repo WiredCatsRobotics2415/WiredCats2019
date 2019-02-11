@@ -52,12 +52,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     gamepad = new XboxController(0);
-    compressor = new Compressor(RobotMap.PCM_ID);
+    //compressor = new Compressor(RobotMap.PCM_ID);
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
     arcadeDrive = new ArcadeDrive();
-    intake = new Intake();
+    //intake = new Intake();
 
     compressor.stop();
     ringlight = new Relay(0);
@@ -133,34 +133,16 @@ public class Robot extends TimedRobot {
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1;
 
-    leftY = arcadeDrive.INTERPOLATION_FACTOR*Math.pow(leftY, 3) + (1 - arcadeDrive.INTERPOLATION_FACTOR)*leftY;
-    rightX = arcadeDrive.INTERPOLATION_FACTOR*Math.pow(rightX, 3) + (1 - arcadeDrive.INTERPOLATION_FACTOR)*rightX;
-    
-    double left = leftY*arcadeDrive.STRAIGHT_LIMITER + rightX*arcadeDrive.TURN_BOOSTER;
-    double right =  leftY*arcadeDrive.STRAIGHT_LIMITER - rightX*arcadeDrive.TURN_BOOSTER;
-
-    arcadeDrive.setMotors(left, right);
-
-    // arcadeDrive.testMotor(leftY);
-
-    // arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
-
-    if (gamepad.getBumper(Hand.kLeft)) {
+    arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+    //arcadeDrive.testMotor(1.0);;
+    /*if (gamepad.getBumperPressed(Hand.kLeft)) {
       intake.intake();
     } else if (gamepad.getBumper(Hand.kRight)) {
       intake.outtake();
     } else {
       intake.still();
-    }
-    if(System.currentTimeMillis() - 500 > lastPrint) {
-      arcadeDrive.printCurrent();
-      lastPrint = System.currentTimeMillis();
-    }
-    if(gamepad.getAButton() == true) {
-      ringlight.set(Relay.Value.kOff);
-    } else {
-      ringlight.set(Relay.Value.kForward);
-    }
+    }*/
+
   }
 
   /**
