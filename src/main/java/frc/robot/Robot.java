@@ -17,6 +17,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.cheesy.CheesyDriveHelper;
 import frc.robot.subsystems.ArcadeDrive;
 import frc.robot.subsystems.Intake;
+import frc.util.Limelight;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,6 +44,8 @@ public class Robot extends TimedRobot {
   public static Intake intake;
   public static Relay ringlight;
 
+  public static Limelight limelight;
+
   private double lastPrint;
 
   /**
@@ -52,13 +59,18 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     gamepad = new XboxController(0);
-    //compressor = new Compressor(RobotMap.PCM_ID);
+    // compressor = new Compressor(RobotMap.PCM_ID);
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
     arcadeDrive = new ArcadeDrive();
     //intake = new Intake();
 
+<<<<<<< HEAD
+=======
+    limelight = new Limelight();
+
+>>>>>>> 19690c05bf7a3f49020000430ba97e3c289a5678
     // compressor.stop();
     ringlight = new Relay(0);
   }
@@ -133,15 +145,53 @@ public class Robot extends TimedRobot {
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1;
 
-    arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
-    //arcadeDrive.testMotor(1.0);;
-    /*if (gamepad.getBumperPressed(Hand.kLeft)) {
-      intake.intake();
-    } else if (gamepad.getBumper(Hand.kRight)) {
-      intake.outtake();
-    } else {
-      intake.still();
-    }*/
+    // arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+
+    double left, right;
+
+    left = leftY - rightX;
+    right = leftY + rightX;
+
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTableEntry tx = table.getEntry("tx");
+    NetworkTableEntry ty = table.getEntry("ty");
+    NetworkTableEntry ta = table.getEntry("ta");
+
+    //read values periodically
+    double x = tx.getDouble(0.00);
+    double y = ty.getDouble(0.00);
+    double area = ta.getDouble(0.00);
+
+    //post to smart dashboard periodically
+    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("LimelightY", y);
+    SmartDashboard.putNumber("LimelightArea", area);
+
+    if (limelight.isTarget()) {
+      double heading_error = x;
+      double distance_error = area - limelight.TARGET_AREA;
+      // System.out.println("HEADING ERROR: " + heading_error);
+      double steering_adjust = 0.0;
+      double distance_adjust = 0.0;
+
+      if (x > 1.0) {
+        steering_adjust = limelight.kP * heading_error; //+ limelight.min_command;
+      } else if (x < 1.0) {
+        steering_adjust = limelight.kP * heading_error; // - limelight.min_command;
+      }
+
+      distance_adjust = distance_error * 0.05;
+
+      left += steering_adjust + distance_adjust;
+      right -= steering_adjust - distance_adjust;
+
+      // System.out.println("STEERING ADJUST: " + steering_adjust);
+
+      System.out.println("DISTANCE: " + distance_error);
+
+    }
+
+    arcadeDrive.setMotors(left, right);
 
   }
 
