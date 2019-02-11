@@ -78,7 +78,7 @@ public class VelocityDrive extends Subsystem {
   /**
    * ticks per 100ms;
    */
-  private final double MAX_SPEED = 1000;
+  private final double MAX_SPEED = 3628.0;
   /**
    * Timeout constant for PIDF control in milliseconds
    */
@@ -186,7 +186,7 @@ public class VelocityDrive extends Subsystem {
   public void zeroYaw() {
     ahrs.zeroYaw();
   }
-
+  
   /**
    * get the yaw for the accelerometer
    * @return the yaw for the accelerometer (need to find out unit)
