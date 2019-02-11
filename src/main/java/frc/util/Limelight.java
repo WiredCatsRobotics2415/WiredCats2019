@@ -9,6 +9,7 @@ package frc.util;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /**
  * Wrapper class for getting and setting Limelight NetworkTable values.
@@ -17,6 +18,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  */
 public class Limelight {
 	private static NetworkTableInstance table = null;
+    public float kP = -0.1f;
+    public float min_command = 0.05f;
+    public float TARGET_AREA = 9.0f;
 
 	/**
 	 * Light modes for Limelight.
