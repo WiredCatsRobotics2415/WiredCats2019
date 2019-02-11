@@ -18,6 +18,10 @@ import frc.robot.cheesy.CheesyDriveHelper;
 import frc.robot.subsystems.ArcadeDrive;
 import frc.robot.subsystems.Intake;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -134,14 +138,21 @@ public class Robot extends TimedRobot {
     boolean isQuickTurn = Math.abs(leftY) < 0.1;
 
     arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
-    //arcadeDrive.testMotor(1.0);;
-    /*if (gamepad.getBumperPressed(Hand.kLeft)) {
-      intake.intake();
-    } else if (gamepad.getBumper(Hand.kRight)) {
-      intake.outtake();
-    } else {
-      intake.still();
-    }*/
+
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTableEntry tx = table.getEntry("tx");
+    NetworkTableEntry ty = table.getEntry("ty");
+    NetworkTableEntry ta = table.getEntry("ta");
+
+    //read values periodically
+    double x = tx.getDouble(0.0);
+    double y = ty.getDouble(0.0);
+    double area = ta.getDouble(0.0);
+
+    //post to smart dashboard periodically
+    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("LimelightY", y);
+    SmartDashboard.putNumber("LimelightArea", area);
 
   }
 
