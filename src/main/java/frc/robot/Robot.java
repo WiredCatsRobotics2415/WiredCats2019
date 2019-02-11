@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
     arcadeDrive = new ArcadeDrive();
     //intake = new Intake();
 
-    compressor.stop();
+    // compressor.stop();
     ringlight = new Relay(0);
   }
 
