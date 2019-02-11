@@ -25,18 +25,20 @@ public class ArcadeDrive extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private WPI_TalonSRX lFront, rFront, lBack, rBack, lMid, rMid;
+  private WPI_TalonSRX lFront, rFront, lBack, rBack;
   public AHRS ahrs;
 
   private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
   public final double DEADBAND = 0.05;
 
+	public final float INTERPOLATION_FACTOR = 0.75f;   //Nathan's Settings
+	public final float STRAIGHT_LIMITER = 0.95f;
+	public final float TURN_BOOSTER = 1.3f;
+
 
   public ArcadeDrive() {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
-    lMid = new WPI_TalonSRX(RobotMap.LEFT_TALON_MID);
-    rMid = new WPI_TalonSRX(RobotMap.RIGHT_TALON_MID);
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
@@ -46,39 +48,38 @@ public class ArcadeDrive extends Subsystem {
     //   DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
     // }
 
-    lFront.setInverted(false);
-    lMid.setInverted(true);
+    lFront.setInverted(true);
     lBack.setInverted(true);
     rFront.setInverted(false);
-    rMid.setInverted(false);
     rBack.setInverted(false);
 
 
-    lBack.set(ControlMode.Follower, lFront.getDeviceID());
-    rBack.set(ControlMode.Follower, rFront.getDeviceID());
+    lFront.set(ControlMode.Follower, lBack.getDeviceID());
+    rFront.set(ControlMode.Follower, rBack.getDeviceID());
 
-    lMid.set(ControlMode.Follower, lFront.getDeviceID());
-    rMid.set(ControlMode.Follower, rFront.getDeviceID());
+    lBack.set(ControlMode.PercentOutput, 0);
+    rBack.set(ControlMode.PercentOutput, 0);
 
-    lFront.set(ControlMode.PercentOutput, 0);
+    lBack.setNeutralMode(NeutralMode.Brake);
+    rBack.setNeutralMode(NeutralMode.Brake);
+
+    /*lFront.set(ControlMode.PercentOutput, 0);
     rFront.set(ControlMode.PercentOutput, 0);
 
-    lFront.setNeutralMode(NeutralMode.Brake);
-    rFront.setNeutralMode(NeutralMode.Brake);
+    lFront.setNeutralMode(NeutralMode.Coast);
+    rFront.setNeutralMode(NeutralMode.Coast);*/
 
   }
 
   public void testMotor(double vel) {
-    lMid.set(vel);
-    lFront.set(vel);
-    lBack.set(vel);
+    rBack.set(vel);
     // System.out.println("percentage"+lFront.getMotorOutputPercent());
     // System.out.println("voltage"+lFront.getMotorOutputVoltage());
     } 
 
   public void setMotors(double left, double right) {
-    lFront.set(left);
-    rFront.set(right);
+    lBack.set(left);
+    rBack.set(right);
   }
 
   public void drive(DriveSignal signal) {
@@ -94,13 +95,22 @@ public class ArcadeDrive extends Subsystem {
   }
   
   public void setBrakeMode(boolean brake) {
-    if (brake) {
-      lFront.setNeutralMode(NeutralMode.Brake);
-      rFront.setNeutralMode(NeutralMode.Brake);
+    /*if (brake) {
+      lBack.setNeutralMode(NeutralMode.Brake);
+      rBack.setNeutralMode(NeutralMode.Brake);
     } else {
-      lFront.setNeutralMode(NeutralMode.Coast);
-      rFront.setNeutralMode(NeutralMode.Coast);
-    }
+      lBack.setNeutralMode(NeutralMode.Coast);
+      rBack.setNeutralMode(NeutralMode.Coast);
+    }*/
+  }
+
+  public void printCurrent() {
+    //lFront, rFront, lBack, rBack, lMid, rMid;
+    System.out.println("lFront current="+lFront.getOutputCurrent());
+    System.out.println("lBack current="+lBack.getOutputCurrent());
+    System.out.println("rFront current="+rFront.getOutputCurrent());
+    System.out.println("rBack current="+rBack.getOutputCurrent());
+    System.out.println();
   }
 
   @Override

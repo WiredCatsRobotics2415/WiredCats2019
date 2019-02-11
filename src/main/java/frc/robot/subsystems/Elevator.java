@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 
+import java.util.ArrayList;
+
 /**
  * Add your docs here.
  */
@@ -26,9 +28,11 @@ public class Elevator extends Subsystem {
   private WPI_TalonSRX elevOne, elevTwo, elevThree, elevFour;
   private Solenoid shifter;
   private WPI_TalonSRX[] elevTalons;
-  private DigitalInput lowBall, lowHatch, midBall, midHatch, highBall, highHatch;
+  private DigitalInput bottom, lowBall, lowHatch, midBall, midHatch, highBall, highHatch;
+  public byte lastHeight, B, LB, LH, MB, MH, HB, HH, T;
+  public ArrayList<Byte> targets;
 
-  public Elevator() {
+  public Elevator(byte lastHeight) {
     elevOne = new WPI_TalonSRX(RobotMap.ELEVATOR_ONE);
     elevTwo = new WPI_TalonSRX(RobotMap.ELEVATOR_TWO);
     elevThree = new WPI_TalonSRX(RobotMap.ELEVATOR_THREE);
@@ -36,7 +40,13 @@ public class Elevator extends Subsystem {
 
     shifter = new Solenoid(RobotMap.PCM_ID);
 
+    bottom = new DigitalInput(0);
+
     WPI_TalonSRX[] elevTalons = {elevOne, elevTwo, elevThree, elevFour};
+    ArrayList<Byte> targets = new ArrayList<Byte>();
+    targets.add(B);
+    targets.add(LB);
+    targets.add(LH);
 
     elevTwo.set(ControlMode.Follower, elevOne.getDeviceID());
     elevThree.set(ControlMode.Follower, elevOne.getDeviceID());
@@ -44,6 +54,15 @@ public class Elevator extends Subsystem {
     
     elevOne.setNeutralMode(NeutralMode.Brake);
     elevOne.set(ControlMode.PercentOutput, 0);
+
+    lastHeight = B;
+    this.lastHeight = lastHeight;
+  }
+
+  public void setElevMotors(double speed) {
+    for (WPI_TalonSRX talon: elevTalons) {
+      talon.set(speed);
+    }
   }
 
   public void liftUp() {
@@ -58,6 +77,12 @@ public class Elevator extends Subsystem {
     }
   }
 
+  public void stop() {
+    for (WPI_TalonSRX talon: elevTalons) {
+      talon.set(0);
+    }
+  }
+
   public void shift() {
     if (shifter.get()) {
       shifter.set(false);
@@ -66,18 +91,30 @@ public class Elevator extends Subsystem {
     }
   }
 
-  public void aim(DigitalInput goal) {
-    if (goal == this.lowBall) {
+  public boolean above(byte last, byte target) {
+    if (targets.indexOf(last) > targets.indexOf(target)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
-    } else if (goal == this.lowHatch) {
+  public void aim(byte goal) {
+    if (goal == LB) {
+      if (!lowBall.get()) {
+        liftUp();
+      } else {
+        stop();
+      }
+    } else if (goal == LH) {
 
-    } else if (goal == this.midBall) {
+    } else if (goal == MB) {
 
-    } else if (goal == this.midHatch) {
+    } else if (goal == MH) {
 
-    } else if (goal == this.highBall) {
+    } else if (goal == HB) {
 
-    } else if (goal == this.highHatch) {
+    } else if (goal == HH) {
 
     }
   }

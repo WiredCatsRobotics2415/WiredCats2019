@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -36,6 +37,9 @@ public class Robot extends TimedRobot {
 
   public static ArcadeDrive arcadeDrive;
   public static Intake intake;
+  public static Relay ringlight;
+
+  private double lastPrint;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -55,6 +59,8 @@ public class Robot extends TimedRobot {
     arcadeDrive = new ArcadeDrive();
     intake = new Intake();
 
+    compressor.stop();
+    ringlight = new Relay(0);
   }
 
   /**
@@ -109,6 +115,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    lastPrint = Double.MIN_VALUE;
   }
 
   /**
@@ -126,16 +133,34 @@ public class Robot extends TimedRobot {
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1;
 
-    arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
+    leftY = arcadeDrive.INTERPOLATION_FACTOR*Math.pow(leftY, 3) + (1 - arcadeDrive.INTERPOLATION_FACTOR)*leftY;
+    rightX = arcadeDrive.INTERPOLATION_FACTOR*Math.pow(rightX, 3) + (1 - arcadeDrive.INTERPOLATION_FACTOR)*rightX;
+    
+    double left = leftY*arcadeDrive.STRAIGHT_LIMITER + rightX*arcadeDrive.TURN_BOOSTER;
+    double right =  leftY*arcadeDrive.STRAIGHT_LIMITER - rightX*arcadeDrive.TURN_BOOSTER;
 
-    if (gamepad.getBumperPressed(Hand.kLeft)) {
+    arcadeDrive.setMotors(left, right);
+
+    // arcadeDrive.testMotor(leftY);
+
+    // arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
+
+    if (gamepad.getBumper(Hand.kLeft)) {
       intake.intake();
-    } else if (gamepad.getBumperPressed(Hand.kRight)) {
+    } else if (gamepad.getBumper(Hand.kRight)) {
       intake.outtake();
     } else {
       intake.still();
     }
-
+    if(System.currentTimeMillis() - 500 > lastPrint) {
+      arcadeDrive.printCurrent();
+      lastPrint = System.currentTimeMillis();
+    }
+    if(gamepad.getAButton() == true) {
+      ringlight.set(Relay.Value.kOff);
+    } else {
+      ringlight.set(Relay.Value.kForward);
+    }
   }
 
   /**

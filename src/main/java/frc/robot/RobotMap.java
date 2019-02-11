@@ -16,16 +16,14 @@ public class RobotMap {
 
 	public static final int LEFT_TALON_BACK = 14; 
 	public static final int LEFT_TALON_FRONT = 10; 
-	public static final int LEFT_TALON_MID = 12;
 	public static final int RIGHT_TALON_BACK = 1; 
 	public static final int RIGHT_TALON_FRONT = 5;
-	public static final int RIGHT_TALON_MID = 2;
 
 	public static final int ELEVATOR_ONE = 6;
 	public static final int ELEVATOR_TWO = 6;
 	public static final int ELEVATOR_THREE = 6;
 	public static final int ELEVATOR_FOUR = 6;
 
-	public static final int INTAKE = 6;
+	public static final int INTAKE = 15;
 
 }

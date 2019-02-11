@@ -29,15 +29,15 @@ public class Intake extends Subsystem {
     roller.setInverted(false);
 
     roller.set(ControlMode.PercentOutput, 0);
-    roller.setNeutralMode(NeutralMode.Coast);
+    roller.setNeutralMode(NeutralMode.Brake);
   }
 
   public void intake(){
-    roller.set(0.5);
+    roller.set(1);
   }
 
   public void outtake() {
-    roller.set(-0.5);
+    roller.set(-1);
   }
 
   public void still() {
