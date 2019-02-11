@@ -21,8 +21,8 @@ public class DriveSignal {
      * @param r clockwise rotation ranging from -1.0 to 1.0
      */
     public DriveSignal(double speed, double r) {
-        rightSignal = speed - r;
-        leftSignal = speed + r;
+        rightSignal = speed + r;
+        leftSignal = speed - r;
     }
 
     /**
@@ -34,8 +34,8 @@ public class DriveSignal {
     public DriveSignal(double speed, double r, boolean quickTurn) {
         this(speed,r);
         if(quickTurn) {
-            rightSignal = -r;
-            leftSignal = r;
+            rightSignal = r;
+            leftSignal = -r;
         }
     }
 
