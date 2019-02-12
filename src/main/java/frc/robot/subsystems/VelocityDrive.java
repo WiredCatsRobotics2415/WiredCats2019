@@ -63,6 +63,8 @@ public class VelocityDrive extends Subsystem {
    * shuffleboard value the error of the right motors
    */
   private NetworkTableEntry rightPIDError;
+  private NetworkTableEntry leftVelocity;
+  private NetworkTableEntry rightVelocity;
   /**
    * if pid tuning is being done
    */
@@ -146,6 +148,8 @@ public class VelocityDrive extends Subsystem {
       networkTableKF = manualPIDFTuner.add("KF", KF).getEntry();
       leftPIDError = manualPIDFTuner.add("Left PID Error", 0.0).getEntry();
       rightPIDError = manualPIDFTuner.add("Right PID Error", 0.0).getEntry();
+      leftVelocity = manualPIDFTuner.add("Left Velocity", 0.0).getEntry();
+      rightVelocity = manualPIDFTuner.add("Right Velocity", 0.0).getEntry();
     } else {
       manualPIDFTuner = null;
       networkTableKP = null;
@@ -154,6 +158,8 @@ public class VelocityDrive extends Subsystem {
       networkTableKF = null;
       leftPIDError = null;
       rightPIDError = null;
+      leftVelocity = null;
+      rightVelocity = null;
     }
   }
 
@@ -176,6 +182,8 @@ public class VelocityDrive extends Subsystem {
       refreshPIDValuesNetworkTable();
       leftPIDError.setDouble((double)lBack.getClosedLoopError());
       rightPIDError.setDouble((double)rBack.getClosedLoopError());
+      leftVelocity.setDouble((double)lBack.getSelectedSensorVelocity());
+      rightVelocity.setDouble((double)rBack.getSelectedSensorVelocity());
     }
     setMotors(signal.getLeft()*MAX_SPEED, signal.getRight()*MAX_SPEED);
   }
