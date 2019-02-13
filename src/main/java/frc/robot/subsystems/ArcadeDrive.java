@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
@@ -66,6 +67,9 @@ public class ArcadeDrive extends Subsystem {
     lFront.setNeutralMode(NeutralMode.Coast);
     rFront.setNeutralMode(NeutralMode.Coast);
 
+    lBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    rBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+
   }
 
   public void testMotor(double vel) {
@@ -77,6 +81,14 @@ public class ArcadeDrive extends Subsystem {
   public void setMotors(double left, double right) {
     lBack.set(left);
     rBack.set(right);
+  }
+
+  public double[] getVelocity() {
+    double[] velocities = new double[2];
+    velocities[0] = lBack.getSelectedSensorVelocity();
+    velocities[1] = rBack.getSelectedSensorVelocity();
+    return velocities;
+
   }
 
   public void drive(DriveSignal signal) {

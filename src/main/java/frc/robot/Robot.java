@@ -188,6 +188,8 @@ public class Robot extends TimedRobot {
 
     }
 
+    System.out.println("LEFT: " + arcadeDrive.getVelocity()[0]);
+    System.out.println("RIGHT: " + arcadeDrive.getVelocity()[1]); 
     arcadeDrive.setMotors(left, right);
 
   }
