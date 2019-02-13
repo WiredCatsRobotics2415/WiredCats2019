@@ -66,11 +66,8 @@ public class Robot extends TimedRobot {
     arcadeDrive = new ArcadeDrive();
     //intake = new Intake();
 
-<<<<<<< HEAD
-=======
     limelight = new Limelight();
 
->>>>>>> 19690c05bf7a3f49020000430ba97e3c289a5678
     // compressor.stop();
     ringlight = new Relay(0);
   }
