@@ -19,4 +19,6 @@ public class RobotMap {
 	public static final int RIGHT_TALON_BACK = 1; 
 	public static final int RIGHT_TALON_FRONT = 3;
 
+	public static final int PIDGEY = 5;
+
 }

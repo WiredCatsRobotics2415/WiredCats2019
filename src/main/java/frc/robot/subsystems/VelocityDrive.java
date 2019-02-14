@@ -11,6 +11,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -34,7 +37,7 @@ public class VelocityDrive extends Subsystem {
   /**
    * Accelerometer
    */
-  public AHRS ahrs;
+  public PigeonIMU pidgey;
   /**
    * shuffleboard tab for PID tuning
    */
@@ -60,7 +63,7 @@ public class VelocityDrive extends Subsystem {
    * ticks per 100ms;
    */
   private final double MAX_SPEED = 3628.0;
-  private final double MAX_TURN = 1000; //TODO
+  private final double MAX_TURN = 90; //TODO
   /**
    * Timeout constant for PIDF control in milliseconds
    */
@@ -94,6 +97,8 @@ public class VelocityDrive extends Subsystem {
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
+    pidgey = new PigeonIMU(RobotMap.PIDGEY);
+
     try {
       //ahrs = new AHRS(Port.kMXP);
     } catch (RuntimeException ex) {
@@ -108,8 +113,12 @@ public class VelocityDrive extends Subsystem {
     lFront.set(ControlMode.Follower, lFront.getDeviceID());
     rFront.set(ControlMode.Follower, rFront.getDeviceID());
 
+    lBack.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 0, kTimeoutMs);
+    rBack.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, 0, kTimeoutMs);
     lBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, PRIMARY_PID_INX, kTimeoutMs);
     rBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, PRIMARY_PID_INX, kTimeoutMs);
+    lBack.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, TURN_PID_INX, kTimeoutMs);
+    rBack.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, TURN_PID_INX, kTimeoutMs);
 
     setBrakeMode(true);
 
@@ -121,6 +130,10 @@ public class VelocityDrive extends Subsystem {
     rBack.configClosedLoopPeakOutput(PRIMARY_PID_INX, DISTANCE_MAX_OUTPUT);
     lBack.configClosedLoopPeakOutput(TURN_PID_INX, TURN_MAX_OUTPUT);
     rBack.configClosedLoopPeakOutput(TURN_PID_INX, TURN_MAX_OUTPUT);
+    lBack.selectProfileSlot(PRIMARY_PID_INX, 0);
+    lBack.selectProfileSlot(TURN_PID_INX, 1);
+    rBack.selectProfileSlot(PRIMARY_PID_INX, 0);
+    rBack.selectProfileSlot(TURN_PID_INX, 1);
     this.PIDFTuning = PIDFTuning;
     if(PIDFTuning) {
       manualPIDFTuner = Shuffleboard.getTab("PIDF Tuner");
@@ -150,9 +163,9 @@ public class VelocityDrive extends Subsystem {
    * @param left left motors's speedn (need to determine the unit to use)
    * @param right right motors's speedn (need to determine the unit to use)
    */
-  public void setMotors(double left, double right) {
-    lBack.set(ControlMode.Velocity, left);
-    rBack.set(ControlMode.Velocity, right);
+  public void setMotors(double speed, double r) {
+    lBack.set(ControlMode.Velocity, speed, DemandType.AuxPID, r);
+    rBack.set(ControlMode.Velocity, speed, DemandType.AuxPID, r);
   }
 
   /**
@@ -167,14 +180,17 @@ public class VelocityDrive extends Subsystem {
       leftVelocity.setDouble((double)lBack.getSelectedSensorVelocity());
       rightVelocity.setDouble((double)rBack.getSelectedSensorVelocity());
     }
-    setMotors(signal.getLeft()*MAX_SPEED, signal.getRight()*MAX_SPEED);
+    if(Math.abs(getYaw()) > 20000) {
+      System.out.println("Near Max Turn"); // possible issue with max turn 
+    }
+    setMotors(signal.getSpeed()*MAX_SPEED, getYaw() + signal.getR()*MAX_TURN);
   }
 
   /**
    * zero out Yaw on the accelerometer
    */
   public void zeroYaw() {
-    ahrs.zeroYaw();
+    pidgey.setYaw(0, kTimeoutMs);
   }
   
   /**
@@ -182,7 +198,9 @@ public class VelocityDrive extends Subsystem {
    * @return the yaw for the accelerometer (need to find out unit)
    */
   public double getYaw() {
-    return ahrs.getYaw();
+    double[] yawPitchRoll = new double[3];
+    pidgey.getYawPitchRoll(yawPitchRoll);
+    return yawPitchRoll[0];
   }
   
   /**

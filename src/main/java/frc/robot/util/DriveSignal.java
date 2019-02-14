@@ -14,6 +14,8 @@ public class DriveSignal {
      * speed of the left side ranging from 0.0 to 1.0
      */
     private double leftSignal;
+    private double speed;
+    private double r;
 
     /**
      * Takes the speed and rotation input and determines the speed to set each motor
@@ -23,6 +25,8 @@ public class DriveSignal {
     public DriveSignal(double speed, double r) {
         rightSignal = speed + r;
         leftSignal = speed - r;
+        this.speed = speed;
+        this.r = r;
     }
 
     /**
@@ -36,6 +40,7 @@ public class DriveSignal {
         if(quickTurn) {
             rightSignal = r;
             leftSignal = -r;
+            this.speed = 0;
         }
     }
 
@@ -53,5 +58,13 @@ public class DriveSignal {
      */
     public double getLeft() {
         return leftSignal;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+    
+    public double getR() {
+        return r;
     }
 }
