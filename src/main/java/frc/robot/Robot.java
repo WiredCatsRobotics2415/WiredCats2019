@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.cheesy.CheesyDriveHelper;
 import frc.robot.subsystems.ArcadeDrive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeRotator;
+import frc.robot.subsystems.Elevator;
 import frc.util.Limelight;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -37,11 +39,15 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   public static XboxController gamepad;
+  public static XboxController operator;
   public static Compressor compressor;
   public static CheesyDriveHelper cheesyDriveHelper;
 
   public static ArcadeDrive arcadeDrive;
   public static Intake intake;
+  public static IntakeRotator intakeRotator;
+  public static Elevator elevator;
+
   public static Relay ringlight;
 
   public static Limelight limelight;
@@ -59,14 +65,17 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     gamepad = new XboxController(0);
+    operator = new XboxController(1);
     // compressor = new Compressor(RobotMap.PCM_ID);
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
     arcadeDrive = new ArcadeDrive();
-    //intake = new Intake();
+    // intake = new Intake();
+    intakeRotator = new IntakeRotator();
+    elevator = new Elevator();
 
-    limelight = new Limelight();
+    // limelight = new Limelight();
 
     // compressor.stop();
     ringlight = new Relay(0);
@@ -108,15 +117,29 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+    double leftY, rightX;
+    leftY = gamepad.getRawAxis(1);
+    rightX = -gamepad.getRawAxis(4);
+
+    if (Math.abs(leftY) < Math.abs(arcadeDrive.DEADBAND)) leftY = 0;
+    if (Math.abs(rightX) < Math.abs(arcadeDrive.DEADBAND)) rightX = 0;
+
+    boolean isQuickTurn = Math.abs(leftY) < 0.1;
+
+    // arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+
+    double left, right, rotate;
+
+    left = leftY - rightX;
+    right = leftY + rightX;
+
+    arcadeDrive.setMotors(left, right);
+
+    rotate = operator.getRawAxis(1);
+    if (Math.abs(rotate) < arcadeDrive.DEADBAND) rotate = 0;
+    intakeRotator.setMotor(rotate);
+    System.out.println(rotate);
+
   }
 
   /**
@@ -125,6 +148,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     lastPrint = Double.MIN_VALUE;
+
+    intakeRotator.setBrakeMode(true);
   }
 
   /**
@@ -188,9 +213,50 @@ public class Robot extends TimedRobot {
 
     }
 
-    System.out.println("LEFT: " + arcadeDrive.getVelocity()[0]);
-    System.out.println("RIGHT: " + arcadeDrive.getVelocity()[1]); 
-    arcadeDrive.setMotors(left, right);
+    // System.out.println("LEFT: " + arcadeDrive.getVelocity()[0]);
+    // System.out.println("RIGHT: " + arcadeDrive.getVelocity()[1]); 
+
+    // arcadeDrive.setMotors(left, right);
+
+    double rotate;
+
+    // if (gamepad.getBumper(Hand.kLeft)) {
+    //     intake.intake();
+    // } else if (gamepad.getBumper(Hand.kRight)) {
+    //     intake.outtake();
+    // } else {
+    //     intake.still();
+    // }
+
+    //   if (operator.getBumper(Hand.kLeft)) {
+    //     intake.intake();
+    // } else if (operator.getBumper(Hand.kRight)) {
+    //     intake.outtake();
+    // } else {
+    //     intake.still();
+    // }
+
+    if (gamepad.getTriggerAxis(Hand.kLeft) > arcadeDrive.DEADBAND) {
+      System.out.println(gamepad.getRawAxis(2));
+      intakeRotator.setMotor(-1*gamepad.getRawAxis(2));
+    } else if (gamepad.getTriggerAxis(Hand.kRight) > arcadeDrive.DEADBAND) {
+      System.out.println(gamepad.getRawAxis(3));
+      intakeRotator.setMotor(gamepad.getRawAxis(3));
+    } else {
+      rotate = operator.getRawAxis(1);
+
+      if (Math.abs(rotate) < arcadeDrive.DEADBAND) rotate = 0;
+      intakeRotator.setMotor(rotate);
+      System.out.println(rotate);
+    }
+
+    elevator.testMotor(operator.getRawAxis(5));
+
+    // double elev;
+    // elev = operator.getRawAxis(5);
+    // if (Math.abs(elev) < arcadeDrive.DEADBAND) elev = 0;
+
+    // elevator.setElevMotors(elev);
 
   }
 
@@ -199,5 +265,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    intakeRotator.setBrakeMode(false);
+    elevator.setBrakeMode(false);
+
   }
 }

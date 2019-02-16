@@ -28,40 +28,61 @@ public class Elevator extends Subsystem {
   private WPI_TalonSRX elevOne, elevTwo, elevThree, elevFour;
   private Solenoid shifter;
   private WPI_TalonSRX[] elevTalons;
-  private DigitalInput bottom, lowBall, lowHatch, midBall, midHatch, highBall, highHatch;
-  public byte lastHeight, B, LB, LH, MB, MH, HB, HH, T;
-  public ArrayList<Byte> targets;
+  private DigitalInput bottom, top;
+  // public byte lastHeight, B, LB, LH, MB, MH, HB, HH, T;
+  // public ArrayList<Byte> targets;
 
-  public Elevator(byte lastHeight) {
+  public Elevator() {
     elevOne = new WPI_TalonSRX(RobotMap.ELEVATOR_ONE);
     elevTwo = new WPI_TalonSRX(RobotMap.ELEVATOR_TWO);
-    elevThree = new WPI_TalonSRX(RobotMap.ELEVATOR_THREE);
-    elevFour = new WPI_TalonSRX(RobotMap.ELEVATOR_FOUR);
+    // elevThree = new WPI_TalonSRX(RobotMap.ELEVATOR_THREE);
+    // elevFour = new WPI_TalonSRX(RobotMap.ELEVATOR_FOUR);
 
-    shifter = new Solenoid(RobotMap.PCM_ID);
+    // shifter = new Solenoid(RobotMap.PCM_ID);
 
-    bottom = new DigitalInput(0);
+    top = new DigitalInput(RobotMap.ELEV_TOP);
+    bottom = new DigitalInput(RobotMap.ELEV_BOT);
 
-    WPI_TalonSRX[] elevTalons = {elevOne, elevTwo, elevThree, elevFour};
-    ArrayList<Byte> targets = new ArrayList<Byte>();
-    targets.add(B);
-    targets.add(LB);
-    targets.add(LH);
+    WPI_TalonSRX[] elevTalons = {elevOne, elevTwo};
 
     elevTwo.set(ControlMode.Follower, elevOne.getDeviceID());
-    elevThree.set(ControlMode.Follower, elevOne.getDeviceID());
-    elevFour.set(ControlMode.Follower, elevOne.getDeviceID());
+    // elevThree.set(ControlMode.Follower, elevOne.getDeviceID());
+    // elevFour.set(ControlMode.Follower, elevOne.getDeviceID());
     
     elevOne.setNeutralMode(NeutralMode.Brake);
     elevOne.set(ControlMode.PercentOutput, 0);
 
-    lastHeight = B;
-    this.lastHeight = lastHeight;
+  }
+
+  public void setBrakeMode(boolean brake) {
+    if (brake) {
+      elevOne.setNeutralMode(NeutralMode.Brake);
+    } else {
+      elevOne.setNeutralMode(NeutralMode.Coast);
+    }
+  }
+
+  public void testMotor(double speed) {
+    elevOne.set(speed);
+  }
+
+  public boolean getTop() {
+    return top.get();
+  }
+
+  public boolean getBottom() {
+    return bottom.get();
   }
 
   public void setElevMotors(double speed) {
-    for (WPI_TalonSRX talon: elevTalons) {
-      talon.set(speed);
+    if (speed > 0 && !top.get()) {
+      for (WPI_TalonSRX talon: elevTalons) {
+        talon.set(speed);
+      }
+    } else if (speed < 0 && !bottom.get()) {
+      for (WPI_TalonSRX talon: elevTalons) {
+        talon.set(speed);
+      }
     }
   }
 
@@ -83,6 +104,7 @@ public class Elevator extends Subsystem {
     }
   }
 
+  /*
   public void shift() {
     if (shifter.get()) {
       shifter.set(false);
@@ -119,6 +141,7 @@ public class Elevator extends Subsystem {
     }
   }
 
+  */
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.

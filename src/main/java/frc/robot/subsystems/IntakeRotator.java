@@ -17,32 +17,44 @@ import frc.robot.RobotMap;
 /**
  * Add your docs here.
  */
-public class Intake extends Subsystem {
+public class IntakeRotator extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private WPI_TalonSRX roller;
+  private WPI_TalonSRX rotator;
 
-  public Intake() {
-    roller = new WPI_TalonSRX(RobotMap.INTAKE);
+  public IntakeRotator() {
+    rotator = new WPI_TalonSRX(RobotMap.INTAKE_ROTATE);
 
-    roller.setInverted(false);
+    rotator.setInverted(true);
 
-    roller.set(ControlMode.PercentOutput, 0);
-    roller.setNeutralMode(NeutralMode.Brake);
+    rotator.set(ControlMode.PercentOutput, 0);
+    rotator.setNeutralMode(NeutralMode.Brake);
 
   }
 
-  public void intake(){
-    roller.set(1);
+  public void rotateUp() {
+    rotator.set(1);
   }
 
-  public void outtake() {
-    roller.set(-1);
+  public void rotateDown() {
+    rotator.set(-0.5);
   }
 
   public void still() {
-    roller.set(0);
+    rotator.set(0);
+  }
+
+  public void setMotor(double speed) {
+    rotator.set(speed);
+  }
+
+  public void setBrakeMode(boolean brake) {
+    if (brake) {
+      rotator.setNeutralMode(NeutralMode.Brake);
+    } else {
+      rotator.setNeutralMode(NeutralMode.Coast);
+    }
   }
 
   @Override

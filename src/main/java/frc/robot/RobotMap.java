@@ -19,11 +19,15 @@ public class RobotMap {
 	public static final int RIGHT_TALON_BACK = 1; 
 	public static final int RIGHT_TALON_FRONT = 3;
 
-	public static final int ELEVATOR_ONE = 6;
-	public static final int ELEVATOR_TWO = 6;
-	public static final int ELEVATOR_THREE = 6;
-	public static final int ELEVATOR_FOUR = 6;
+	public static final int ELEVATOR_ONE = 12;
+	public static final int ELEVATOR_TWO = 13;
+	public static final int ELEVATOR_THREE = 6; //no
+	public static final int ELEVATOR_FOUR = 6; //no
 
-	public static final int INTAKE = 15;
+	public static final int ELEV_TOP = 1;
+	public static final int ELEV_BOT = 0;
+
+	public static final int INTAKE = 2;
+	public static final int INTAKE_ROTATE = 0;
 
 }
