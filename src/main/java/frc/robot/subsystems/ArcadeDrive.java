@@ -72,15 +72,11 @@ public class ArcadeDrive extends Subsystem {
 
   }
 
-  public void testMotor(double vel) {
-    lFront.set(vel);
-    // System.out.println("percentage"+lFront.getMotorOutputPercent());
-    // System.out.println("voltage"+lFront.getMotorOutputVoltage());
-    } 
-
   public void setMotors(double left, double right) {
     lBack.set(left);
     rBack.set(right);
+    lFront.set(left);
+    rFront.set(right);
   }
 
   public double[] getVelocity() {
@@ -104,13 +100,14 @@ public class ArcadeDrive extends Subsystem {
   }
   
   public void setBrakeMode(boolean brake) {
-    /*if (brake) {
+    if (brake) {
       lBack.setNeutralMode(NeutralMode.Brake);
       rBack.setNeutralMode(NeutralMode.Brake);
     } else {
       lBack.setNeutralMode(NeutralMode.Coast);
       rBack.setNeutralMode(NeutralMode.Coast);
-    }*/
+    }
+
   }
 
   public void printCurrent() {

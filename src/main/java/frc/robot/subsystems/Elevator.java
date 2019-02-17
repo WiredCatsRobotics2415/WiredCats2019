@@ -40,6 +40,8 @@ public class Elevator extends Subsystem {
 
     // shifter = new Solenoid(RobotMap.PCM_ID);
 
+    elevTwo.setInverted(true);
+
     top = new DigitalInput(RobotMap.ELEV_TOP);
     bottom = new DigitalInput(RobotMap.ELEV_BOT);
 
@@ -62,10 +64,6 @@ public class Elevator extends Subsystem {
     }
   }
 
-  public void testMotor(double speed) {
-    elevOne.set(speed);
-  }
-
   public boolean getTop() {
     return top.get();
   }
@@ -75,15 +73,16 @@ public class Elevator extends Subsystem {
   }
 
   public void setElevMotors(double speed) {
-    if (speed > 0 && !top.get()) {
-      for (WPI_TalonSRX talon: elevTalons) {
-        talon.set(speed);
-      }
-    } else if (speed < 0 && !bottom.get()) {
-      for (WPI_TalonSRX talon: elevTalons) {
-        talon.set(speed);
-      }
-    }
+    // if (speed > 0 && !top.get()) {
+    //   elevOne.set(speed);
+    //   elevTwo.set(speed);
+    // } else if (speed < 0 && !bottom.get()) {
+    //   elevOne.set(speed);
+    //   elevTwo.set(speed);
+    // }
+
+    elevOne.set(speed);
+    elevTwo.set(speed);
   }
 
   public void liftUp() {

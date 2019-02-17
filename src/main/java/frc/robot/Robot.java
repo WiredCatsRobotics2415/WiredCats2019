@@ -71,14 +71,14 @@ public class Robot extends TimedRobot {
     cheesyDriveHelper = new CheesyDriveHelper();
 
     arcadeDrive = new ArcadeDrive();
-    // intake = new Intake();
+    intake = new Intake();
     intakeRotator = new IntakeRotator();
     elevator = new Elevator();
 
     // limelight = new Limelight();
 
     // compressor.stop();
-    ringlight = new Relay(0);
+    // ringlight = new Relay(0);
   }
 
   /**
@@ -138,7 +138,22 @@ public class Robot extends TimedRobot {
     rotate = operator.getRawAxis(1);
     if (Math.abs(rotate) < arcadeDrive.DEADBAND) rotate = 0;
     intakeRotator.setMotor(rotate);
-    System.out.println(rotate);
+
+    if (gamepad.getBumper(Hand.kLeft)) {
+        intake.intake();
+    } else if (gamepad.getBumper(Hand.kRight)) {
+        intake.outtake();
+    } else if (operator.getBumper(Hand.kLeft)) {
+        intake.intake();
+    } else if (operator.getBumper(Hand.kRight)) {
+        intake.outtake();
+    } else {
+        intake.still();
+    }
+
+    double elevatorspeed = operator.getRawAxis(1);
+    if (Math.abs(elevatorspeed) < arcadeDrive.DEADBAND) elevatorspeed = 0;
+    elevator.setElevMotors(elevatorspeed);
 
   }
 
@@ -147,9 +162,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    lastPrint = Double.MIN_VALUE;
-
     intakeRotator.setBrakeMode(true);
+    elevator.setBrakeMode(true);
   }
 
   /**
@@ -171,9 +185,9 @@ public class Robot extends TimedRobot {
 
     double left, right;
 
-    left = leftY - rightX;
-    right = leftY + rightX;
-
+    left = leftY + rightX;
+    right = leftY - rightX;
+/*
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry tx = table.getEntry("tx");
     NetworkTableEntry ty = table.getEntry("ty");
@@ -209,48 +223,52 @@ public class Robot extends TimedRobot {
 
       // System.out.println("STEERING ADJUST: " + steering_adjust);
 
-      System.out.println("DISTANCE: " + distance_error);
+      // System.out.println("DISTANCE: " + distance_error);
 
     }
+    */
 
-    // System.out.println("LEFT: " + arcadeDrive.getVelocity()[0]);
-    // System.out.println("RIGHT: " + arcadeDrive.getVelocity()[1]); 
-
-    // arcadeDrive.setMotors(left, right);
+    arcadeDrive.setMotors(left, right);
 
     double rotate;
 
-    // if (gamepad.getBumper(Hand.kLeft)) {
-    //     intake.intake();
-    // } else if (gamepad.getBumper(Hand.kRight)) {
-    //     intake.outtake();
-    // } else {
-    //     intake.still();
-    // }
-
-    //   if (operator.getBumper(Hand.kLeft)) {
-    //     intake.intake();
-    // } else if (operator.getBumper(Hand.kRight)) {
-    //     intake.outtake();
-    // } else {
-    //     intake.still();
-    // }
-
-    if (gamepad.getTriggerAxis(Hand.kLeft) > arcadeDrive.DEADBAND) {
-      System.out.println(gamepad.getRawAxis(2));
-      intakeRotator.setMotor(-1*gamepad.getRawAxis(2));
-    } else if (gamepad.getTriggerAxis(Hand.kRight) > arcadeDrive.DEADBAND) {
-      System.out.println(gamepad.getRawAxis(3));
-      intakeRotator.setMotor(gamepad.getRawAxis(3));
+    if (gamepad.getBumper(Hand.kLeft)) {
+        intake.intake();
+    } else if (gamepad.getBumper(Hand.kRight)) {
+        intake.outtake();
+    } else if (operator.getBumper(Hand.kLeft)) {
+        intake.intake();
+    } else if (operator.getBumper(Hand.kRight)) {
+        intake.outtake();
     } else {
-      rotate = operator.getRawAxis(1);
-
-      if (Math.abs(rotate) < arcadeDrive.DEADBAND) rotate = 0;
-      intakeRotator.setMotor(rotate);
-      System.out.println(rotate);
+        intake.still();
     }
 
-    elevator.testMotor(operator.getRawAxis(5));
+    // double leftTrigger, rightTrigger;
+
+    // leftTrigger = -gamepad.getTriggerAxis(Hand.kLeft);
+    // if (Math.abs(leftTrigger) < arcadeDrive.DEADBAND) leftTrigger = 0;
+
+    // rightTrigger = gamepad.getTriggerAxis(Hand.kRight);
+    // if (Math.abs(rightTrigger) < arcadeDrive.DEADBAND) rightTrigger = 0;
+
+    // if (Math.abs(leftTrigger) > arcadeDrive.DEADBAND) {
+    //   System.out.println(leftTrigger);
+    //   intakeRotator.setMotor(leftTrigger);
+    // } else if (Math.abs(rightTrigger) > arcadeDrive.DEADBAND) {
+    //   System.out.println(rightTrigger);
+    //   intakeRotator.setMotor(rightTrigger);
+    // } else {
+      rotate = operator.getRawAxis(5);
+      if (Math.abs(rotate) < 0.15 ) rotate = 0;
+      intakeRotator.setMotor(rotate);
+      // System.out.println(rotate);
+    // }
+
+    double elevatorspeed = operator.getRawAxis(1);
+    if (Math.abs(elevatorspeed) < arcadeDrive.DEADBAND) elevatorspeed = 0;
+    elevator.setElevMotors(0.75*elevatorspeed);
+    // System.out.println(0.5*elevatorspeed);
 
     // double elev;
     // elev = operator.getRawAxis(5);
@@ -272,5 +290,6 @@ public class Robot extends TimedRobot {
     intakeRotator.setBrakeMode(false);
     elevator.setBrakeMode(false);
 
+    // System.out.println(elevator.getTop());
   }
 }
