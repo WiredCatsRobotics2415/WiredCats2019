@@ -79,6 +79,10 @@ public class ArcadeDrive extends Subsystem {
     rFront.set(right);
   }
 
+  public double getBusVoltage() {
+    return lBack.getBusVoltage();
+  }
+
   public double[] getVelocity() {
     double[] velocities = new double[2];
     velocities[0] = lBack.getSelectedSensorVelocity();

@@ -259,22 +259,15 @@ public class Robot extends TimedRobot {
     //   System.out.println(rightTrigger);
     //   intakeRotator.setMotor(rightTrigger);
     // } else {
-      rotate = operator.getRawAxis(5);
-      if (Math.abs(rotate) < 0.15 ) rotate = 0;
-      intakeRotator.setMotor(rotate);
+    rotate = operator.getRawAxis(5);
+    if (Math.abs(rotate) < 0.15 ) rotate = 0;
+    intakeRotator.setMotor(rotate);
       // System.out.println(rotate);
     // }
 
     double elevatorspeed = operator.getRawAxis(1);
     if (Math.abs(elevatorspeed) < arcadeDrive.DEADBAND) elevatorspeed = 0;
-    elevator.setElevMotors(0.75*elevatorspeed);
-    // System.out.println(0.5*elevatorspeed);
-
-    // double elev;
-    // elev = operator.getRawAxis(5);
-    // if (Math.abs(elev) < arcadeDrive.DEADBAND) elev = 0;
-
-    // elevator.setElevMotors(elev);
+    elevator.setElevMotors(7/arcadeDrive.getBusVoltage()*elevatorspeed);
 
   }
 
