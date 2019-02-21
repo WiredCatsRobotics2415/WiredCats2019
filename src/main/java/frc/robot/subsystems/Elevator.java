@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -29,6 +30,7 @@ public class Elevator extends Subsystem {
   private Solenoid shifter;
   private WPI_TalonSRX[] elevTalons;
   private DigitalInput bottom, top;
+  private double kF = 0, kP = 0, kI = 0, kD = 0;
   // public byte lastHeight, B, LB, LH, MB, MH, HB, HH, T;
   // public ArrayList<Byte> targets;
 
@@ -45,15 +47,28 @@ public class Elevator extends Subsystem {
     top = new DigitalInput(RobotMap.ELEV_TOP);
     bottom = new DigitalInput(RobotMap.ELEV_BOT);
 
-    WPI_TalonSRX[] elevTalons = {elevOne, elevTwo};
-
-    elevTwo.set(ControlMode.Follower, elevOne.getDeviceID());
+    elevTwo.follow(elevOne);
     // elevThree.set(ControlMode.Follower, elevOne.getDeviceID());
     // elevFour.set(ControlMode.Follower, elevOne.getDeviceID());
     
     elevOne.setNeutralMode(NeutralMode.Brake);
     elevOne.set(ControlMode.PercentOutput, 0);
 
+    elevOne.set(ControlMode.MotionMagic, 0);
+    elevOne.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+
+    elevOne.selectProfileSlot(0, 0);
+    elevOne.config_kF(0, kF, 30); 
+    elevOne.config_kP(0, kP, 30);
+    elevOne.config_kI(0, kI, 30);
+    elevOne.config_kD(0, kD, 30);
+
+    elevOne.setSelectedSensorPosition(0, 0, 30);
+
+  }
+
+  public void goTo(double pos){
+    elevOne.set(ControlMode.MotionMagic, pos);
   }
 
   public void setBrakeMode(boolean brake) {
@@ -82,7 +97,6 @@ public class Elevator extends Subsystem {
     // }
 
     elevOne.set(speed);
-    elevTwo.set(speed);
   }
 
   public void liftUp() {
