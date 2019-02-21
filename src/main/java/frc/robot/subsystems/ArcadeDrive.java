@@ -49,14 +49,20 @@ public class ArcadeDrive extends Subsystem {
     //   DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
     // }
 
+    //practice bot
+    // lFront.setInverted(true);
+    // lBack.setInverted(true);
+    // rFront.setInverted(false);
+    // rBack.setInverted(false);
+
+    //competition bot
     lFront.setInverted(true);
     lBack.setInverted(true);
     rFront.setInverted(false);
     rBack.setInverted(false);
 
-
-    lFront.set(ControlMode.Follower, lBack.getDeviceID());
-    rFront.set(ControlMode.Follower, rBack.getDeviceID());
+    lFront.follow(lBack);
+    rFront.follow(rBack);
 
     lBack.set(ControlMode.PercentOutput, 0);
     rBack.set(ControlMode.PercentOutput, 0);
@@ -64,19 +70,23 @@ public class ArcadeDrive extends Subsystem {
     lFront.set(ControlMode.PercentOutput, 0);
     rFront.set(ControlMode.PercentOutput, 0);
 
-    lFront.setNeutralMode(NeutralMode.Coast);
-    rFront.setNeutralMode(NeutralMode.Coast);
+    lBack.setNeutralMode(NeutralMode.Coast);
+    rBack.setNeutralMode(NeutralMode.Coast);
 
     lBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     rBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
   }
 
+  public void testMotor(double speed) {
+    rFront.set(speed);
+  }
+
   public void setMotors(double left, double right) {
     lBack.set(left);
     rBack.set(right);
-    lFront.set(left);
-    rFront.set(right);
+    // lFront.set(left);
+    // rFront.set(right);
   }
 
   public double getBusVoltage() {

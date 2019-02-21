@@ -276,6 +276,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    double leftY = gamepad.getRawAxis(1);
+    arcadeDrive.testMotor(leftY);
   }
 
   @Override
