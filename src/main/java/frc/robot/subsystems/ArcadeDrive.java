@@ -15,6 +15,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
@@ -23,14 +24,20 @@ import frc.robot.cheesy.DriveSignal;
 /**
  * Add your docs here.
  */
-public class ArcadeDrive extends Subsystem {
+public class ArcadeDrive extends Subsystem implements PIDOutput {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
   private WPI_TalonSRX lFront, rFront, lBack, rBack;
   public AHRS ahrs;
 
-  private double kP = 0.05;
+  private PIDController turnController;
+  private double rotateToAngleRate;
+  private double kP = .025;
+	private double kI = 0.0025;
+	private double kD = .0;
+	private double kF = 0;
+  private double kTolerance = 2.0;
 
 
   private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
@@ -52,6 +59,8 @@ public class ArcadeDrive extends Subsystem {
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
     }
+
+    turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
 
     //practice bot
     // lFront.setInverted(true);
@@ -94,8 +103,14 @@ public class ArcadeDrive extends Subsystem {
   }
 
   public void setMotorsStraight(double left, double right, double yaw) {
-    lBack.set(left - kP*(yaw - getYaw()));
-    rBack.set(right + kP*(yaw - getYaw()));
+    turnController.setInputRange(-180.0f,  180.0f);
+    turnController.setOutputRange(-1.0, 1.0);
+    turnController.setAbsoluteTolerance(kTolerance);
+    turnController.setContinuous(true);
+    turnController.setSetpoint(yaw);
+    turnController.enable();
+    lBack.set(left - rotateToAngleRate);
+    rBack.set(right + rotateToAngleRate);
   }
 
   public double getBusVoltage() {
@@ -147,4 +162,10 @@ public class ArcadeDrive extends Subsystem {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
+
+  @Override
+  public void pidWrite(double output) {
+		rotateToAngleRate = output;
+	}
+
 }
