@@ -14,6 +14,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
@@ -43,11 +46,11 @@ public class ArcadeDrive extends Subsystem {
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
-    // try {
-    //   ahrs = new AHRS(Port.kMXP);
-    // } catch (RuntimeException ex) {
-    //   DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-    // }
+    try {
+      ahrs = new AHRS(Port.kMXP);
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
+    }
 
     //practice bot
     // lFront.setInverted(true);

@@ -79,6 +79,9 @@ public class Robot extends TimedRobot {
 
     // compressor.stop();
     // ringlight = new Relay(0);
+
+    arcadeDrive.zeroYaw();
+
   }
 
   /**
@@ -230,6 +233,8 @@ public class Robot extends TimedRobot {
 
     arcadeDrive.setMotors(left, right);
 
+    System.out.println(arcadeDrive.getYaw());
+
     double rotate;
 
     if (gamepad.getBumper(Hand.kLeft)) {
@@ -284,6 +289,8 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     intakeRotator.setBrakeMode(false);
     elevator.setBrakeMode(false);
+
+    System.out.println(arcadeDrive.getYaw());
 
     // System.out.println(elevator.getTop());
   }
