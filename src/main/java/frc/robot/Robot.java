@@ -16,9 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.cheesy.CheesyDriveHelper;
 import frc.robot.subsystems.ArcadeDrive;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeRotator;
-import frc.robot.subsystems.Elevator;
 import frc.util.Limelight;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -44,9 +41,6 @@ public class Robot extends TimedRobot {
   public static CheesyDriveHelper cheesyDriveHelper;
 
   public static ArcadeDrive arcadeDrive;
-  public static Intake intake;
-  public static IntakeRotator intakeRotator;
-  public static Elevator elevator;
 
   public static Relay ringlight;
 
@@ -71,9 +65,6 @@ public class Robot extends TimedRobot {
     cheesyDriveHelper = new CheesyDriveHelper();
 
     arcadeDrive = new ArcadeDrive();
-    intake = new Intake();
-    intakeRotator = new IntakeRotator();
-    elevator = new Elevator();
 
     // limelight = new Limelight();
 
@@ -135,25 +126,7 @@ public class Robot extends TimedRobot {
 
     arcadeDrive.setMotors(left, right);
 
-    rotate = operator.getRawAxis(1);
-    if (Math.abs(rotate) < arcadeDrive.DEADBAND) rotate = 0;
-    intakeRotator.setMotor(rotate);
-
-    if (gamepad.getBumper(Hand.kLeft)) {
-        intake.intake();
-    } else if (gamepad.getBumper(Hand.kRight)) {
-        intake.outtake();
-    } else if (operator.getBumper(Hand.kLeft)) {
-        intake.intake();
-    } else if (operator.getBumper(Hand.kRight)) {
-        intake.outtake();
-    } else {
-        intake.still();
-    }
-
-    double elevatorspeed = operator.getRawAxis(1);
-    if (Math.abs(elevatorspeed) < arcadeDrive.DEADBAND) elevatorspeed = 0;
-    elevator.setElevMotors(elevatorspeed);
+    
 
   }
 
@@ -162,8 +135,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    intakeRotator.setBrakeMode(true);
-    elevator.setBrakeMode(true);
+
   }
 
   /**
@@ -180,6 +152,7 @@ public class Robot extends TimedRobot {
     if (Math.abs(rightX) < Math.abs(arcadeDrive.DEADBAND)) rightX = 0;
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1;
+    boolean isStraight = Math.abs(rightX) < 0.08;
 
     // arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
 
@@ -228,46 +201,13 @@ public class Robot extends TimedRobot {
     }
     */
 
-    arcadeDrive.setMotors(left, right);
-
-    double rotate;
-
-    if (gamepad.getBumper(Hand.kLeft)) {
-        intake.intake();
-    } else if (gamepad.getBumper(Hand.kRight)) {
-        intake.outtake();
-    } else if (operator.getBumper(Hand.kLeft)) {
-        intake.intake();
-    } else if (operator.getBumper(Hand.kRight)) {
-        intake.outtake();
+    if (isStraight) {
+      arcadeDrive.setMotorsStraight(left, right, arcadeDrive.getYaw());
     } else {
-        intake.still();
+      arcadeDrive.setMotors(left, right);
     }
 
-    // double leftTrigger, rightTrigger;
-
-    // leftTrigger = -gamepad.getTriggerAxis(Hand.kLeft);
-    // if (Math.abs(leftTrigger) < arcadeDrive.DEADBAND) leftTrigger = 0;
-
-    // rightTrigger = gamepad.getTriggerAxis(Hand.kRight);
-    // if (Math.abs(rightTrigger) < arcadeDrive.DEADBAND) rightTrigger = 0;
-
-    // if (Math.abs(leftTrigger) > arcadeDrive.DEADBAND) {
-    //   System.out.println(leftTrigger);
-    //   intakeRotator.setMotor(leftTrigger);
-    // } else if (Math.abs(rightTrigger) > arcadeDrive.DEADBAND) {
-    //   System.out.println(rightTrigger);
-    //   intakeRotator.setMotor(rightTrigger);
-    // } else {
-    rotate = operator.getRawAxis(5);
-    if (Math.abs(rotate) < 0.15 ) rotate = 0;
-    intakeRotator.setMotor(rotate);
-      // System.out.println(rotate);
-    // }
-
-    double elevatorspeed = operator.getRawAxis(1);
-    if (Math.abs(elevatorspeed) < arcadeDrive.DEADBAND) elevatorspeed = 0;
-    elevator.setElevMotors(7/arcadeDrive.getBusVoltage()*elevatorspeed);
+   
 
   }
 
@@ -282,9 +222,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    intakeRotator.setBrakeMode(false);
-    elevator.setBrakeMode(false);
-
+    System.out.println(arcadeDrive.getYaw());
     // System.out.println(elevator.getTop());
   }
 }

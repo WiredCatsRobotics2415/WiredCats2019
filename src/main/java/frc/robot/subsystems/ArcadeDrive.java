@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
@@ -29,6 +30,9 @@ public class ArcadeDrive extends Subsystem {
   private WPI_TalonSRX lFront, rFront, lBack, rBack;
   public AHRS ahrs;
 
+  private double kP = 0.05;
+
+
   private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
   public final double DEADBAND = 0.05;
 
@@ -43,11 +47,11 @@ public class ArcadeDrive extends Subsystem {
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
-    // try {
-    //   ahrs = new AHRS(Port.kMXP);
-    // } catch (RuntimeException ex) {
-    //   DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-    // }
+    try {
+      ahrs = new AHRS(Port.kMXP);
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
+    }
 
     //practice bot
     // lFront.setInverted(true);
@@ -87,6 +91,11 @@ public class ArcadeDrive extends Subsystem {
     rBack.set(right);
     // lFront.set(left);
     // rFront.set(right);
+  }
+
+  public void setMotorsStraight(double left, double right, double yaw) {
+    lBack.set(left - kP*(yaw - getYaw()));
+    rBack.set(right + kP*(yaw - getYaw()));
   }
 
   public double getBusVoltage() {
