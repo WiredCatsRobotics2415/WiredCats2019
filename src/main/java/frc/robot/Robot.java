@@ -179,7 +179,7 @@ public class Robot extends TimedRobot {
     if (Math.abs(leftY) < Math.abs(arcadeDrive.DEADBAND)) leftY = 0;
     if (Math.abs(rightX) < Math.abs(arcadeDrive.DEADBAND)) rightX = 0;
 
-    boolean isQuickTurn = Math.abs(leftY) < 0.1;
+    boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
     // arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
 
