@@ -20,11 +20,13 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.cheesy.DriveSignal;
+import frc.robot.util.pid.PIDTunable;
+import frc.robot.util.pid.PIDValue;
 
 /**
  * Add your docs here.
  */
-public class ArcadeDrive extends Subsystem implements PIDOutput {
+public class ArcadeDrive extends Subsystem implements PIDOutput, PIDTunable{
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
@@ -33,20 +35,21 @@ public class ArcadeDrive extends Subsystem implements PIDOutput {
 
   private PIDController turnController;
   private double rotateToAngleRate;
-  private double kP = .025;
-	private double kI = 0.0025;
-	private double kD = .0;
-	private double kF = 0;
+  private PIDValue pidValues;
+
+  private boolean PIDFTuning;
+
+  private final double kP = .025;
+	private final double kI = 0.0025;
+	private final double kD = .0;
+	private final double kF = 0;
   private double kTolerance = 2.0;
-
-
   private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
   public final double DEADBAND = 0.05;
 
 	public final float INTERPOLATION_FACTOR = 0.75f;   //Nathan's Settings
 	public final float STRAIGHT_LIMITER = 0.95f;
 	public final float TURN_BOOSTER = 1.3f;
-
 
   public ArcadeDrive() {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
@@ -60,6 +63,7 @@ public class ArcadeDrive extends Subsystem implements PIDOutput {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
     }
 
+    pidValues = new PIDValue(kP,kI,kD,kF);
     turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
 
     //practice bot
@@ -88,7 +92,6 @@ public class ArcadeDrive extends Subsystem implements PIDOutput {
 
     lBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     rBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-
   }
 
   public void testMotor(double speed) {
@@ -122,7 +125,6 @@ public class ArcadeDrive extends Subsystem implements PIDOutput {
     velocities[0] = lBack.getSelectedSensorVelocity();
     velocities[1] = rBack.getSelectedSensorVelocity();
     return velocities;
-
   }
 
   public void drive(DriveSignal signal) {
@@ -145,7 +147,6 @@ public class ArcadeDrive extends Subsystem implements PIDOutput {
       lBack.setNeutralMode(NeutralMode.Coast);
       rBack.setNeutralMode(NeutralMode.Coast);
     }
-
   }
 
   public void printCurrent() {
@@ -168,4 +169,21 @@ public class ArcadeDrive extends Subsystem implements PIDOutput {
 		rotateToAngleRate = output;
 	}
 
+  @Override
+  public void setPIDFConstants(PIDValue newValues) {
+    pidValues = new PIDValue(newValues);
+    turnController.setP(pidValues.getKP());
+    turnController.setI(pidValues.getKI());
+    turnController.setD(pidValues.getKD());
+    turnController.setF(pidValues.getKF());
+  }
+
+  public PIDValue getPIDValues() {
+    return pidValues;
+  }
+
+  @Override
+  public double getPIDOutput() {
+    return getYaw();
+  }
 }
