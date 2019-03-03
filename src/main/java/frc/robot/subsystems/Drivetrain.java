@@ -13,119 +13,89 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.cheesy.DriveSignal;
 
-/**
- * Add your docs here.
- */
-public class ArcadeDrive extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
-
+public class Drivetrain extends Subsystem {
+  //motors and sensors
   private WPI_TalonSRX lFront, rFront, lBack, rBack;
   public AHRS ahrs;
 
-  private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
-  public final double DEADBAND = 0.05;
+  //class varibles
+  private WPI_TalonSRX lMaster, rMaster;
+  private ControlMode controlMode;
 
+  //constants
+  private final double WHEEL_CIRCUMFERENCE = Math.PI * 8; //inches
+  
+  public final double DEADBAND = 0.05;
 	public final float INTERPOLATION_FACTOR = 0.75f;   //Nathan's Settings
 	public final float STRAIGHT_LIMITER = 0.95f;
 	public final float TURN_BOOSTER = 1.3f;
-
-
-  public ArcadeDrive() {
+  
+  public Drivetrain() {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
 
-    // try {
-    //   ahrs = new AHRS(Port.kMXP);
-    // } catch (RuntimeException ex) {
-    //   DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-    // }
-
-    //practice bot
-    // lFront.setInverted(true);
-    // lBack.setInverted(true);
-    // rFront.setInverted(false);
-    // rBack.setInverted(false);
-
-    //competition bot
-    lFront.setInverted(true);
-    lBack.setInverted(true);
-    rFront.setInverted(false);
-    rBack.setInverted(false);
+    lFront.setInverted(RobotMap.LEFT_TALON_FRONT_DIRECTION);
+    lBack.setInverted(RobotMap.LEFT_TALON_BACK_DIRECTION);
+    rFront.setInverted(RobotMap.RIGHT_TALON_FRONT_DIRECTION);
+    rBack.setInverted(RobotMap.RIGHT_TALON_BACK_DIRECTION);
 
     lFront.follow(lBack);
     rFront.follow(rBack);
+    lMaster = lBack;
+    rMaster = rBack;
 
-    lBack.set(ControlMode.PercentOutput, 0);
-    rBack.set(ControlMode.PercentOutput, 0);
+    setBrakeMode(true);
 
-    lFront.set(ControlMode.PercentOutput, 0);
-    rFront.set(ControlMode.PercentOutput, 0);
+    lMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    rMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
-    lBack.setNeutralMode(NeutralMode.Coast);
-    rBack.setNeutralMode(NeutralMode.Coast);
-
-    lBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-    rBack.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-
-  }
-
-  public void testMotor(double speed) {
-    rFront.set(speed);
+    setControlMode(ControlMode.PercentOutput);
+    ahrs = null;
   }
 
   public void setMotors(double left, double right) {
-    lBack.set(left);
-    rBack.set(right);
-    // lFront.set(left);
-    // rFront.set(right);
+    lMaster.set(controlMode, left);
+    rMaster.set(controlMode, right);
+  }
+
+  public void drive(double throttle, double turn) {
+    boolean isQuickTurn;
+    if (Math.abs(throttle) < Math.abs(DEADBAND)) throttle = 0;
+    if (Math.abs(turn) < Math.abs(DEADBAND)) turn = 0;
+    setMotors(throttle+turn,throttle-turn);
+  }
+
+  public void drive(DriveSignal driveSignal) {
+    setMotors(driveSignal.getLeft(),driveSignal.getRight());
+  }
+
+  public void setBrakeMode(boolean brake) {
+    if(brake) {
+      lMaster.setNeutralMode(NeutralMode.Brake);
+      rMaster.setNeutralMode(NeutralMode.Brake);
+    } else {
+      lMaster.setNeutralMode(NeutralMode.Coast);
+      rMaster.setNeutralMode(NeutralMode.Coast);
+    }
+  }
+
+  public void setControlMode(ControlMode controlMode) {
+    this.controlMode = controlMode;
   }
 
   public double getBusVoltage() {
     return lBack.getBusVoltage();
   }
 
-  public double[] getVelocity() {
-    double[] velocities = new double[2];
-    velocities[0] = lBack.getSelectedSensorVelocity();
-    velocities[1] = rBack.getSelectedSensorVelocity();
-    return velocities;
-
-  }
-
-  public void drive(DriveSignal signal) {
-    setMotors(signal.getLeft(), signal.getRight());
-  }
-
-  public void zeroYaw() {
-    ahrs.zeroYaw();
-  }
-
-  public double getYaw() {
-    return ahrs.getYaw();
-  }
-  
-  public void setBrakeMode(boolean brake) {
-    if (brake) {
-      lBack.setNeutralMode(NeutralMode.Brake);
-      rBack.setNeutralMode(NeutralMode.Brake);
-    } else {
-      lBack.setNeutralMode(NeutralMode.Coast);
-      rBack.setNeutralMode(NeutralMode.Coast);
-    }
-
-  }
-
   public void printCurrent() {
-    //lFront, rFront, lBack, rBack, lMid, rMid;
     System.out.println("lFront current="+lFront.getOutputCurrent());
     System.out.println("lBack current="+lBack.getOutputCurrent());
     System.out.println("rFront current="+rFront.getOutputCurrent());

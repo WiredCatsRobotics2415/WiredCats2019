@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.cheesy.CheesyDriveHelper;
-import frc.robot.subsystems.ArcadeDrive;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeRotator;
 import frc.robot.subsystems.Elevator;
@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
   public static Compressor compressor;
   public static CheesyDriveHelper cheesyDriveHelper;
 
-  public static ArcadeDrive arcadeDrive;
+  public static Drivetrain drivetrain;
   public static Intake intake;
   public static IntakeRotator intakeRotator;
   public static Elevator elevator;
@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
-    arcadeDrive = new ArcadeDrive();
+    drivetrain = new Drivetrain();
     intake = new Intake();
     intakeRotator = new IntakeRotator();
     elevator = new Elevator();
@@ -121,22 +121,13 @@ public class Robot extends TimedRobot {
     leftY = gamepad.getRawAxis(1);
     rightX = -gamepad.getRawAxis(4);
 
-    if (Math.abs(leftY) < Math.abs(arcadeDrive.DEADBAND)) leftY = 0;
-    if (Math.abs(rightX) < Math.abs(arcadeDrive.DEADBAND)) rightX = 0;
-
     boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
-    // arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+    //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+    drivetrain.drive(leftY, rightX);
 
-    double left, right, rotate;
-
-    left = leftY - rightX;
-    right = leftY + rightX;
-
-    arcadeDrive.setMotors(left, right);
-
-    rotate = operator.getRawAxis(1);
-    if (Math.abs(rotate) < arcadeDrive.DEADBAND) rotate = 0;
+    double rotate = operator.getRawAxis(1);
+    if (Math.abs(rotate) < drivetrain.DEADBAND) rotate = 0;
     intakeRotator.setMotor(rotate);
 
     if (gamepad.getBumper(Hand.kLeft)) {
@@ -152,8 +143,8 @@ public class Robot extends TimedRobot {
     }
 
     double elevatorspeed = operator.getRawAxis(1);
-    if (Math.abs(elevatorspeed) < arcadeDrive.DEADBAND) elevatorspeed = 0;
-    elevator.setElevMotors(elevatorspeed);
+    if (Math.abs(elevatorspeed) < drivetrain.DEADBAND) elevatorspeed = 0;
+    elevator.setElevMotors(7/drivetrain.getBusVoltage()*elevatorspeed);
 
   }
 
@@ -176,17 +167,10 @@ public class Robot extends TimedRobot {
     leftY = gamepad.getRawAxis(1);
     rightX = -gamepad.getRawAxis(4);
 
-    if (Math.abs(leftY) < Math.abs(arcadeDrive.DEADBAND)) leftY = 0;
-    if (Math.abs(rightX) < Math.abs(arcadeDrive.DEADBAND)) rightX = 0;
-
     boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
-    // arcadeDrive.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
-
-    double left, right;
-
-    left = leftY + rightX;
-    right = leftY - rightX;
+    //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+    drivetrain.drive(leftY, rightX);
 /*
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry tx = table.getEntry("tx");
@@ -228,8 +212,6 @@ public class Robot extends TimedRobot {
     }
     */
 
-    arcadeDrive.setMotors(left, right);
-
     double rotate;
 
     if (gamepad.getBumper(Hand.kLeft)) {
@@ -266,8 +248,8 @@ public class Robot extends TimedRobot {
     // }
 
     double elevatorspeed = operator.getRawAxis(1);
-    if (Math.abs(elevatorspeed) < arcadeDrive.DEADBAND) elevatorspeed = 0;
-    elevator.setElevMotors(7/arcadeDrive.getBusVoltage()*elevatorspeed);
+    if (Math.abs(elevatorspeed) < drivetrain.DEADBAND) elevatorspeed = 0;
+    elevator.setElevMotors(7/drivetrain.getBusVoltage()*elevatorspeed);
 
   }
 
@@ -277,7 +259,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     double leftY = gamepad.getRawAxis(1);
-    arcadeDrive.testMotor(leftY);
+    drivetrain.setMotors(leftY, leftY);
   }
 
   @Override

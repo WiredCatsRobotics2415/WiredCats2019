@@ -13,11 +13,21 @@ package frc.robot;
 public class RobotMap {
 
     public static final int PCM_ID = 20;
-
+	//Drivetrain
 	public static final int LEFT_TALON_BACK = 14; 
 	public static final int LEFT_TALON_FRONT = 15; 
 	public static final int RIGHT_TALON_BACK = 1; 
 	public static final int RIGHT_TALON_FRONT = 3;
+	//competition bot
+	public static final boolean LEFT_TALON_BACK_DIRECTION = true;
+	public static final boolean LEFT_TALON_FRONT_DIRECTION = true;
+	public static final boolean RIGHT_TALON_BACK_DIRECTION = false;
+	public static final boolean RIGHT_TALON_FRONT_DIRECTION = false;
+	//practice bot
+	/*public static final boolean LEFT_TALON_BACK_DIRECTION = true;
+	public static final boolean LEFT_TALON_FRONT_DIRECTION = true;
+	public static final boolean RIGHT_TALON_BACK_DIRECTION = false;
+	public static final boolean RIGHT_TALON_FRONT_DIRECTION = false;*/
 
 	public static final int ELEVATOR_ONE = 12;
 	public static final int ELEVATOR_TWO = 13;
