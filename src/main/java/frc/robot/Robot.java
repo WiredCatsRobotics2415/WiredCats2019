@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
     drivetrain.drive(leftY, rightX);
 
     double rotate = operator.getRawAxis(1);
-    if (Math.abs(rotate) < drivetrain.DEADBAND) rotate = 0;
+    if (Math.abs(rotate) < Constants.DEADBAND) rotate = 0;
     intakeRotator.setMotor(rotate);
 
     if (gamepad.getBumper(Hand.kLeft)) {
@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
     }
 
     double elevatorspeed = operator.getRawAxis(1);
-    if (Math.abs(elevatorspeed) < drivetrain.DEADBAND) elevatorspeed = 0;
+    if (Math.abs(elevatorspeed) < Constants.DEADBAND) elevatorspeed = 0;
     elevator.setElevMotors(7/drivetrain.getBusVoltage()*elevatorspeed);
 
   }
@@ -248,7 +248,7 @@ public class Robot extends TimedRobot {
     // }
 
     double elevatorspeed = operator.getRawAxis(1);
-    if (Math.abs(elevatorspeed) < drivetrain.DEADBAND) elevatorspeed = 0;
+    if (Math.abs(elevatorspeed) < Constants.DEADBAND) elevatorspeed = 0;
     elevator.setElevMotors(7/drivetrain.getBusVoltage()*elevatorspeed);
 
   }
