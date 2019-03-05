@@ -12,7 +12,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 
@@ -26,7 +27,7 @@ public class Elevator extends Subsystem {
   // here. Call these from Commands.
 
   private WPI_TalonSRX elevOne, elevTwo, elevThree, elevFour;
-  private Solenoid shifter;
+  private DoubleSolenoid shifter;
   private WPI_TalonSRX[] elevTalons;
   private DigitalInput bottom, top;
   // public byte lastHeight, B, LB, LH, MB, MH, HB, HH, T;
@@ -35,22 +36,22 @@ public class Elevator extends Subsystem {
   public Elevator() {
     elevOne = new WPI_TalonSRX(RobotMap.ELEVATOR_ONE);
     elevTwo = new WPI_TalonSRX(RobotMap.ELEVATOR_TWO);
-    // elevThree = new WPI_TalonSRX(RobotMap.ELEVATOR_THREE);
-    // elevFour = new WPI_TalonSRX(RobotMap.ELEVATOR_FOUR);
+    elevThree = new WPI_TalonSRX(RobotMap.ELEVATOR_THREE);
+    elevFour = new WPI_TalonSRX(RobotMap.ELEVATOR_FOUR);
 
-    // shifter = new Solenoid(RobotMap.PCM_ID);
+    shifter = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.ELEV_SWITCH_1, RobotMap.ELEV_SWITCH_2);
 
-    elevTwo.setInverted(true);
+    // elevTwo.setInverted(true);
+    // elevThree.setInverted(true);
+    elevFour.setInverted(true);
 
     top = new DigitalInput(RobotMap.ELEV_TOP);
     bottom = new DigitalInput(RobotMap.ELEV_BOT);
 
-    WPI_TalonSRX[] elevTalons = {elevOne, elevTwo};
-
-    elevTwo.set(ControlMode.Follower, elevOne.getDeviceID());
-    // elevThree.set(ControlMode.Follower, elevOne.getDeviceID());
-    // elevFour.set(ControlMode.Follower, elevOne.getDeviceID());
-    
+    elevTwo.follow(elevOne);
+    elevThree.follow(elevOne);
+    elevFour.follow(elevOne);
+  
     elevOne.setNeutralMode(NeutralMode.Brake);
     elevOne.set(ControlMode.PercentOutput, 0);
 
@@ -82,7 +83,7 @@ public class Elevator extends Subsystem {
     // }
 
     elevOne.set(speed);
-    elevTwo.set(speed);
+    // elevTwo.set(speed);
   }
 
   public void liftUp() {
@@ -103,14 +104,23 @@ public class Elevator extends Subsystem {
     }
   }
 
-  /*
   public void shift() {
-    if (shifter.get()) {
-      shifter.set(false);
+    if (shifter.get() == Value.kForward) {
+      shifter.set(Value.kReverse);
     } else {
-      shifter.set(true);
+      shifter.set(Value.kForward);
     }
   }
+
+  public void shiftUp() {
+    shifter.set(Value.kReverse);
+  }
+
+  public void shiftDown() {
+    shifter.set(Value.kForward);
+  }
+
+  /*
 
   public boolean above(byte last, byte target) {
     if (targets.indexOf(last) > targets.indexOf(target)) {

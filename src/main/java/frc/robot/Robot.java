@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
     gamepad = new XboxController(0);
     operator = new XboxController(1);
-    // compressor = new Compressor(RobotMap.PCM_ID);
+    compressor = new Compressor(RobotMap.PCM_ID);
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
@@ -167,6 +167,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     intakeRotator.setBrakeMode(true);
     elevator.setBrakeMode(true);
+    elevator.shiftUp();
   }
 
   /**
@@ -233,7 +234,7 @@ public class Robot extends TimedRobot {
 
     arcadeDrive.setMotors(left, right);
 
-    System.out.println(arcadeDrive.getYaw());
+    // System.out.println(arcadeDrive.getYaw());
 
     double rotate;
 
@@ -272,7 +273,14 @@ public class Robot extends TimedRobot {
 
     double elevatorspeed = operator.getRawAxis(1);
     if (Math.abs(elevatorspeed) < arcadeDrive.DEADBAND) elevatorspeed = 0;
-    elevator.setElevMotors(7/arcadeDrive.getBusVoltage()*elevatorspeed);
+    elevator.setElevMotors(elevatorspeed);
+    // System.out.println(elevatorspeed);
+
+    if (Math.abs(operator.getTriggerAxis(Hand.kLeft)) > 0.5) {
+      elevator.shiftUp();
+    } else if (Math.abs(operator.getTriggerAxis(Hand.kRight)) > 0.5) {
+      elevator.shiftDown();
+    }
 
   }
 
@@ -290,7 +298,7 @@ public class Robot extends TimedRobot {
     intakeRotator.setBrakeMode(false);
     elevator.setBrakeMode(false);
 
-    System.out.println(arcadeDrive.getYaw());
+    // System.out.println(arcadeDrive.getYaw());
 
     // System.out.println(elevator.getTop());
   }
