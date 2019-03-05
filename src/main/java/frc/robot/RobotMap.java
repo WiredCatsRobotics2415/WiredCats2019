@@ -23,6 +23,7 @@ public class RobotMap {
 	public static final boolean LEFT_TALON_FRONT_DIRECTION = true;
 	public static final boolean RIGHT_TALON_BACK_DIRECTION = false;
 	public static final boolean RIGHT_TALON_FRONT_DIRECTION = false;
+	
 	//practice bot
 	/*public static final boolean LEFT_TALON_BACK_DIRECTION = true;
 	public static final boolean LEFT_TALON_FRONT_DIRECTION = true;
@@ -33,6 +34,11 @@ public class RobotMap {
 	public static final int ELEVATOR_TWO = 13;
 	public static final int ELEVATOR_THREE = 11; 
 	public static final int ELEVATOR_FOUR = 10;
+
+	public static final boolean ELEVATOR_ONE_DIRECTION = false;
+	public static final boolean ELEVATOR_TWO_DIRECTION = false;
+	public static final boolean ELEVATOR_THREE_DIRECTION = false;
+	public static final boolean ELEVATOR_FOUR_DIRECTION = true;
 
 	public static final int ELEV_TOP = 1;
 	public static final int ELEV_BOT = 0;

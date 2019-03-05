@@ -58,7 +58,11 @@ public class Drivetrain extends Subsystem implements PIDTunable{
     rMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
     setDrivemode(drivemode);
-    ahrs = null;
+    try {
+      ahrs = new AHRS(Port.kMXP);
+    } catch (RuntimeException ex) {
+      ahrs = null;
+    }
   }
 
   public void setMotors(double left, double right) {
@@ -163,6 +167,21 @@ public class Drivetrain extends Subsystem implements PIDTunable{
         output = new double[0];
         return output;
     }
+  }
+
+  public double[] getVelocity() {
+    double[] velocities = new double[2];
+    velocities[0] = lBack.getSelectedSensorVelocity();
+    velocities[1] = rBack.getSelectedSensorVelocity();
+    return velocities;
+  }
+
+  public void zeroYaw() {
+    ahrs.zeroYaw();
+  }
+
+  public double getYaw() {
+    return ahrs.getYaw();
   }
 
   public double getBusVoltage() {

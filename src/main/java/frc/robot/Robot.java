@@ -197,12 +197,12 @@ public class Robot extends TimedRobot {
       double distance_adjust = 0.0;
 
       if (x > 1.0) {
-        steering_adjust = limelight.kP * heading_error; //+ limelight.min_command;
+        steering_adjust = limelight.kP_TURN * heading_error; //+ limelight.min_command;
       } else if (x < 1.0) {
-        steering_adjust = limelight.kP * heading_error; // - limelight.min_command;
+        steering_adjust = limelight.kP_TURN * heading_error; // - limelight.min_command;
       }
 
-      distance_adjust = distance_error * 0.05;
+      distance_adjust = distance_error * limelight.kP_DRIVE;
 
       left += steering_adjust + distance_adjust;
       right -= steering_adjust - distance_adjust;
