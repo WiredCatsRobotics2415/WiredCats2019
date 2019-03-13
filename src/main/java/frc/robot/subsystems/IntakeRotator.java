@@ -26,7 +26,7 @@ public class IntakeRotator extends Subsystem {
   public IntakeRotator() {
     rotator = new WPI_TalonSRX(RobotMap.INTAKE_ROTATE);
 
-    rotator.setInverted(true);
+    rotator.setInverted(false);
 
     rotator.set(ControlMode.PercentOutput, 0);
     rotator.setNeutralMode(NeutralMode.Brake);
