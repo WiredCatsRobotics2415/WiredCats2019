@@ -32,6 +32,8 @@ public class Drivetrain extends Subsystem implements PIDTunable{
   private Drivemode drivemode;
   private PIDValue[] pidValues;
   
+  public double DEADBAND = 0.05;
+
   public Drivetrain() {
     this(Drivemode.percentOutput);
   }

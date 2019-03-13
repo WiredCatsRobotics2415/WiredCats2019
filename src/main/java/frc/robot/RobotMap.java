@@ -33,7 +33,7 @@ public class RobotMap {
 	public static final int ELEVATOR_ONE = 12;
 	public static final int ELEVATOR_TWO = 13;
 	public static final int ELEVATOR_THREE = 11; 
-	public static final int ELEVATOR_FOUR = 10;
+	public static final int ELEVATOR_FOUR = 4;
 
 	public static final boolean ELEVATOR_ONE_DIRECTION = false;
 	public static final boolean ELEVATOR_TWO_DIRECTION = false;
@@ -48,5 +48,11 @@ public class RobotMap {
 
 	public static final int INTAKE = 2;
 	public static final int INTAKE_ROTATE = 0;
+
+	// public static final int CLIMB_LEFT_MOTOR = 1;
+	// public static final int CLIMB_RIGHT_MOTOR = 0;
+
+	// public static final boolean CLIMB_LEFT_DIRECTION = false;
+	// public static final boolean CLIMB_RIGHT_DIRECTION = false;
 
 }
