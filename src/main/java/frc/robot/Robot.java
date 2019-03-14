@@ -19,6 +19,8 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeRotator;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Endgame;
+import frc.robot.subsystems.HatchManipulator;
 import frc.util.Limelight;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -47,6 +49,8 @@ public class Robot extends TimedRobot {
   public static Intake intake;
   public static IntakeRotator intakeRotator;
   public static Elevator elevator;
+  public static Endgame endgame;
+  public static HatchManipulator hatchManip;
 
   public static Relay ringlight;
 
@@ -74,6 +78,8 @@ public class Robot extends TimedRobot {
     intake = new Intake();
     intakeRotator = new IntakeRotator();
     elevator = new Elevator();
+    endgame = new Endgame();
+    hatchManip = new HatchManipulator();
 
     // limelight = new Limelight();
 
@@ -244,8 +250,11 @@ public class Robot extends TimedRobot {
 
     double elevatorspeed = operator.getRawAxis(1);
 
-    if (gamepad.getPOV() == 315) elevatorspeed = 0.8;
-    if (gamepad.getPOV() == 225) elevatorspeed = -0.8;
+    if (gamepad.getPOV() == 315) {
+      elevatorspeed = 0.8;
+    } else if (gamepad.getPOV() == 225) {
+      elevatorspeed = -0.8;
+    }
 
     if (Math.abs(elevatorspeed) < Constants.DEADBAND) elevatorspeed = 0;
     elevator.setElevMotors(elevatorspeed);
@@ -256,9 +265,21 @@ public class Robot extends TimedRobot {
       elevator.shiftUp();
     }
 
-    //ENDGAME = button 14 on gamepad
+    if (gamepad.getRawButton(14)) {
+      endgame.flipOut();
+      endgame.spin();
+    } else if (gamepad.getRawButton(13)) { //not sure what button that is...
+      endgame.flipIn();
+      endgame.stop();
+    }
 
-
+    if (gamepad.getRawButtonPressed(12)) { //left joystick
+      hatchManip.extendToggle();
+    }
+    
+    if (gamepad.getRawButtonPressed(11)) { // right joystick
+      hatchManip.stretchToggle();
+    }
   }
 
   /**

@@ -46,6 +46,9 @@ public class RobotMap {
 	public static final int ELEV_SWITCH_1 = 1;
 	public static final int ELEV_SWITCH_2 = 0;
 
+	public static final int EXTENDY = 6;
+	public static final int STRETCHY = 8;
+
 	public static final int INTAKE = 2;
 	public static final int INTAKE_ROTATE = 0;
 
@@ -54,5 +57,11 @@ public class RobotMap {
 
 	public static final boolean CLIMB_LEFT_DIRECTION = false;
 	public static final boolean CLIMB_RIGHT_DIRECTION = true;
+
+	public static final int CLIMB_LEFT_PISTON_1 = 2;
+	public static final int CLIMB_LEFT_PISTON_2 = 3;
+
+	public static final int CLIMB_RIGHT_PISTON_1 = 4;
+	public static final int CLIMB_RIGHT_PISTON_2 = 5;
 
 }
