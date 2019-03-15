@@ -79,6 +79,8 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     lMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
     rMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
 
+    zeroEncoders();
+    
     if(RobotMap.PIGEON_ID >= 0) {
       if(RobotMap.PIGEON_ON_CAN) {
         pidgey = new PigeonIMU(RobotMap.PIGEON_ID);
@@ -98,6 +100,8 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     } else {
       usingPidgey = false;
     }
+
+    zeroYaw();
 
     if(usingPidgey) {
       if(RobotMap.PIGEON_ON_CAN) {
@@ -351,6 +355,19 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     return 0;
   }
 
+  public void zeroEncoders() {
+    lMaster.setSelectedSensorPosition(0, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
+    rMaster.setSelectedSensorPosition(0, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
+  }
+
+  public double getLeftEncoderPos() { //in inches
+    return lMaster.getSelectedSensorPosition(Constants.VELOCITY_PID_INDEX)/Constants.ENCODER_TICK_ROTATION*Constants.WHEEL_CIRCUMFERENCE;
+  }
+
+  public double getRightEncoderPos() { //in inches
+    return rMaster.getSelectedSensorPosition(Constants.VELOCITY_PID_INDEX)/Constants.ENCODER_TICK_ROTATION*Constants.WHEEL_CIRCUMFERENCE;
+  }
+
   public double getBusVoltage() {
     return lBack.getBusVoltage();
   }
@@ -369,7 +386,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     // setDefaultCommand(new MySpecialCommand());
   }
 
-  enum Drivemode {
+  public enum Drivemode {
     percentOutput, velocity, percentOutputTurnControl;
   }
 }
