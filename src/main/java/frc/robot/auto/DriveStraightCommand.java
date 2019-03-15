@@ -10,7 +10,6 @@ package frc.robot.auto;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Drivetrain.Drivemode;
 
 public class DriveStraightCommand extends Command {
   private double distance, speed, yaw;

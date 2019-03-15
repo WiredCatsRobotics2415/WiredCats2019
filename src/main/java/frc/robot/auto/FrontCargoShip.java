@@ -7,6 +7,7 @@
 
 package frc.robot.auto;
 
+import frc.robot.Robot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class FrontCargoShip extends CommandGroup {
@@ -15,78 +16,78 @@ public class FrontCargoShip extends CommandGroup {
   public static final double targetXOffset = 12;
   public static final double straightOnDistance = 24;
 
-  public FrontCargoShip(int startPos, boolean left) {
+  public FrontCargoShip(Robot.StartLocation startPos, boolean left) {
     if(left) {
       switch(startPos) {
-        case 0: //left
+        case left: //left
           addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
-        case 1: //middle
+        case middle: //middle
           addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break; 
-        case 2: //right
+        case right: //right
           addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
       }
     } else {
       switch(startPos) {
-        case 0: //left
+        case left: //left
           addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
-        case 1: //middle
+        case middle: //middle
           addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break; 
-        case 2: //right
+        case right: //right
           addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
       }
     }
     if(left) {
       switch(startPos) {
-        case 0: //left
+        case left: //left
           addSequential(new DriveStraightCommand(pythag(sideOffset-targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break;
-        case 1: //middle
+        case middle: //middle
           addSequential(new DriveStraightCommand(pythag(targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break; 
-        case 2: //right
+        case right: //right
           addSequential(new DriveStraightCommand(pythag(sideOffset+targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break;
       }
     } else {
       switch(startPos) {
-        case 0: //left
+        case left: //left
           addSequential(new DriveStraightCommand(pythag(sideOffset+targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break;
-        case 1: //middle
+        case middle: //middle
           addSequential(new DriveStraightCommand(pythag(targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break; 
-        case 2: //right
+        case right: //right
           addSequential(new DriveStraightCommand(pythag(sideOffset-targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break;
       }
     }
     if(left) {
       switch(startPos) {
-        case 0: //left
+        case left: //left
           addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
-        case 1: //middle
+        case middle: //middle
           addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break; 
-        case 2: //right
+        case right: //right
           addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
       }
     } else {
       switch(startPos) {
-        case 0: //left
+        case left: //left
           addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
-        case 1: //middle
+        case middle: //middle
           addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break; 
-        case 2: //right
+        case right: //right
           addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
       }
