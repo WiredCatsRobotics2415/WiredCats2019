@@ -20,35 +20,44 @@ public class HatchManipulator extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private Solenoid extendyBoi, stretchyBoi;
+  private DoubleSolenoid extendyBoi, stretchyBoi;
 
   public HatchManipulator() {
-    extendyBoi = new Solenoid(RobotMap.PCM_ID, RobotMap.EXTENDY);
-    stretchyBoi = new Solenoid(RobotMap.PCM_ID, RobotMap.STRETCHY);
+    extendyBoi = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.EXTENDY_1, RobotMap.EXTENDY_2);
+    stretchyBoi = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.STRETCHY_1, RobotMap.STRETCHY_2);
   }
 
   public void extend() {
-    extendyBoi.set(true);
+    extendyBoi.set(Value.kForward);
   }
 
   public void retract() {
-    extendyBoi.set(false);
+    extendyBoi.set(Value.kReverse);
   }
 
   public void extendToggle() {
-    extendyBoi.set(!extendyBoi.get());
+    if (extendyBoi.get() == Value.kForward) {
+      extendyBoi.set(Value.kReverse);
+    } else {
+    extendyBoi.set(Value.kForward);
+    }
+    
   }
 
   public void stretch() {
-    stretchyBoi.set(true);
+    stretchyBoi.set(Value.kForward);
   }
 
   public void shrink() {
-    stretchyBoi.set(false);
+    stretchyBoi.set(Value.kReverse);
   }
 
   public void stretchToggle() {
-    stretchyBoi.set(!stretchyBoi.get());
+    if (stretchyBoi.get() == Value.kForward) {
+      stretchyBoi.set(Value.kReverse);
+    } else {
+      stretchyBoi.set(Value.kForward);
+    }
   }
 
   public void takeHatch() {

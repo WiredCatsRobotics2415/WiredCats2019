@@ -22,7 +22,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Endgame;
 import frc.robot.subsystems.HatchManipulator;
 import frc.util.Limelight;
-
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -64,6 +64,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    // CameraServer.getInstance().startAutomaticCapture();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -82,6 +83,7 @@ public class Robot extends TimedRobot {
     hatchManip = new HatchManipulator();
 
     // limelight = new Limelight();
+    compressor.stop();
 
     limelightOn = false;
 
@@ -115,7 +117,10 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    // System.out.println("Auto selected: " + m_autoSelected);
+    intakeRotator.setBrakeMode(true);
+    elevator.setBrakeMode(true);
+    elevator.shiftUp();
   }
 
   /**
@@ -162,6 +167,7 @@ public class Robot extends TimedRobot {
     intakeRotator.setBrakeMode(true);
     elevator.setBrakeMode(true);
     elevator.shiftUp();
+    endgame.flipIn();
   }
 
   /**
@@ -238,25 +244,28 @@ public class Robot extends TimedRobot {
       intakeRotator.setMotor(-1*leftTrigger);
     } else if (rightTrigger > 0) {
       intakeRotator.setMotor(rightTrigger);
+    } else {
+      double rotate;
+      rotate = operator.getRawAxis(5);
+      if (Math.abs(rotate) < 0.15 ) rotate = 0;
+      intakeRotator.setMotor(rotate);
     }
 
 
-    double rotate;
-    rotate = operator.getRawAxis(5);
-    if (Math.abs(rotate) < 0.15 ) rotate = 0;
-    intakeRotator.setMotor(rotate);
-      // System.out.println(rotate);
-    // }
+    double elevatorspeed = -operator.getRawAxis(1);
+    if (Math.abs(elevatorspeed) < 0.1) elevatorspeed = 0;
 
-    double elevatorspeed = operator.getRawAxis(1);
-
-    if (gamepad.getPOV() == 315) {
-      elevatorspeed = 0.8;
-    } else if (gamepad.getPOV() == 225) {
-      elevatorspeed = -0.8;
+    if (gamepad.getPOV() == 0) {
+      elevatorspeed = 0.72;
+      // System.out.println("HELLO");
+    } else if (gamepad.getPOV() == 180) {
+      elevatorspeed = -0.5;
+    } else if (gamepad.getPOV() == -1) {
+      elevatorspeed = -operator.getRawAxis(1);
     }
 
-    if (Math.abs(elevatorspeed) < Constants.DEADBAND) elevatorspeed = 0;
+    // System.out.println(elevatorspeed);
+
     elevator.setElevMotors(elevatorspeed);
 
     if (gamepad.getRawButton(2)) {
@@ -268,18 +277,20 @@ public class Robot extends TimedRobot {
     if (gamepad.getRawButton(14)) {
       endgame.flipOut();
       endgame.spin();
-    } else if (gamepad.getRawButton(13)) { //not sure what button that is...
+    } else if (gamepad.getRawButton(13)) { //PS button home button
       endgame.flipIn();
       endgame.stop();
     }
 
-    if (gamepad.getRawButtonPressed(12)) { //left joystick
+
+    if (gamepad.getRawButtonPressed(11)) { //left joystick
       hatchManip.extendToggle();
     }
     
-    if (gamepad.getRawButtonPressed(11)) { // right joystick
+    if (gamepad.getRawButtonPressed(12)) { // right joystick
       hatchManip.stretchToggle();
     }
+
   }
 
   /**
@@ -288,12 +299,21 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     double leftY = gamepad.getRawAxis(1);
-    drivetrain.setMotors(leftY, leftY);
+    // drivetrain.setMotors(leftY, leftY);
+    // endgame.testMotor(leftY);
+    if (gamepad.getBumperPressed(Hand.kLeft)) {
+      endgame.flipOut();
+    } else if (gamepad.getBumperPressed(Hand.kRight)) {
+      endgame.flipIn();
+    }
+    System.out.println(gamepad.getPOV());
   }
 
   @Override
   public void disabledPeriodic() {
     intakeRotator.setBrakeMode(false);
     elevator.setBrakeMode(false);
+    // System.out.println(drivetrain.getYaw());
+    // System.out.println(gamepad.getPOV());
   }
 }

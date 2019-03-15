@@ -27,21 +27,25 @@ public class Endgame extends Subsystem {
   private WPI_TalonSRX lClimb, rClimb, masterClimb;
 
   public Endgame() {
-    lSwitch = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_LEFT_PISTON_1, RobotMap.CLIMB_LEFT_PISTON_2);
+    // lSwitch = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_LEFT_PISTON_1, RobotMap.CLIMB_LEFT_PISTON_2);
     rSwitch = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_RIGHT_PISTON_1, RobotMap.CLIMB_RIGHT_PISTON_2);
 
     lClimb = new WPI_TalonSRX(RobotMap.CLIMB_LEFT_MOTOR);
-    rClimb = new WPI_TalonSRX(RobotMap.CLIMB_RIGHT_MOTOR);
+    // rClimb = new WPI_TalonSRX(RobotMap.CLIMB_RIGHT_MOTOR);
 
     lClimb.setInverted(RobotMap.CLIMB_LEFT_DIRECTION);
-    rClimb.setInverted(RobotMap.CLIMB_RIGHT_DIRECTION);
+    // rClimb.setInverted(RobotMap.CLIMB_RIGHT_DIRECTION);
 
-    rClimb.follow(lClimb);
+    // rClimb.follow(lClimb);
 
     masterClimb = lClimb;
     masterClimb.setNeutralMode(NeutralMode.Brake);
     masterClimb.set(ControlMode.PercentOutput, 0);
 
+  }
+
+  public void testMotor(double speed) {
+    lClimb.set(speed);
   }
 
   public void stop() {
@@ -53,12 +57,12 @@ public class Endgame extends Subsystem {
   }
 
   public void flipOut() {
-    lSwitch.set(Value.kForward);
+    // lSwitch.set(Value.kForward);
     rSwitch.set(Value.kForward);
   }
 
   public void flipIn() {
-    lSwitch.set(Value.kReverse);
+    // lSwitch.set(Value.kReverse);
     rSwitch.set(Value.kReverse);
   }
 
