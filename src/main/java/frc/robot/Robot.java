@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.auto.FrontCargoShip;
+import frc.robot.auto.PassLine;
 import frc.robot.cheesy.CheesyDriveHelper;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -76,7 +77,7 @@ public class Robot extends TimedRobot {
   private boolean limelightOn;
 
   public enum AutoChoice {
-    leftFrontCargo("Left Front Cargo"), rightFrontCargo("Right Front Cargo"), cameraControl("Camera Control");
+    leftFrontCargo("Left Front Cargo"), rightFrontCargo("Right Front Cargo"), passLine("Pass Line"), cameraControl("Camera Control");
     
     private final String name;
     private AutoChoice(String name) {
@@ -178,6 +179,8 @@ public class Robot extends TimedRobot {
       case rightFrontCargo:
         autoCommand = new FrontCargoShip(startLocationSelected, false);
         break;
+      case passLine:
+        autoCommand = new PassLine(startLocationSelected);
       default:
         autoCommand = null;
         break;
