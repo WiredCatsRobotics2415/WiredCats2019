@@ -229,7 +229,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
           rMaster.config_kP(Constants.TURN_PID_INDEX, Constants.TURN_PID.getKF(), Constants.kTimeoutMs);
 
           lMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
-          rMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+          rMaster.configAuxPIDPolarity(true, Constants.kTimeoutMs);
         } else {
           pidController.setPID(Constants.TURN_PID.getKP(), Constants.TURN_PID.getKI(), Constants.TURN_PID.getKD(), Constants.TURN_PID.getKF());
           pidController.setOutputRange(-1, 1);
@@ -327,7 +327,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     this.pidSourceType = sourceType;
   }
 
-  public double[] getVelocity() {
+  public double[] getVelocity() { //native unit/100 ms
     double[] velocities = new double[2];
     velocities[0] = lBack.getSelectedSensorVelocity();
     velocities[1] = rBack.getSelectedSensorVelocity();

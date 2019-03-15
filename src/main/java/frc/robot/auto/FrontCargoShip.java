@@ -19,79 +19,79 @@ public class FrontCargoShip extends CommandGroup {
     if(left) {
       switch(startPos) {
         case 0: //left
-          addSequential(new TurnToAngleCommand(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
         case 1: //middle
-          addSequential(new TurnToAngleCommand(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break; 
         case 2: //right
-          addSequential(new TurnToAngleCommand(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
       }
     } else {
       switch(startPos) {
         case 0: //left
-          addSequential(new TurnToAngleCommand(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
         case 1: //middle
-          addSequential(new TurnToAngleCommand(Math.atan2(targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break; 
         case 2: //right
-          addSequential(new TurnToAngleCommand(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
       }
     }
     if(left) {
       switch(startPos) {
         case 0: //left
-          addSequential(new DriveStraightCommand(pythag(sideOffset-targetXOffset, distanceToShip-straightOnDistance), .8, 5000, false));
+          addSequential(new DriveStraightCommand(pythag(sideOffset-targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break;
         case 1: //middle
-          addSequential(new DriveStraightCommand(pythag(targetXOffset, distanceToShip-straightOnDistance), .8, 5000, false));
+          addSequential(new DriveStraightCommand(pythag(targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break; 
         case 2: //right
-          addSequential(new DriveStraightCommand(pythag(sideOffset+targetXOffset, distanceToShip-straightOnDistance), .4, 5000, false));
+          addSequential(new DriveStraightCommand(pythag(sideOffset+targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break;
       }
     } else {
       switch(startPos) {
         case 0: //left
-          addSequential(new DriveStraightCommand(pythag(sideOffset+targetXOffset, distanceToShip-straightOnDistance), .8, 5000, false));
+          addSequential(new DriveStraightCommand(pythag(sideOffset+targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break;
         case 1: //middle
-          addSequential(new DriveStraightCommand(pythag(targetXOffset, distanceToShip-straightOnDistance), .8, 5000, false));
+          addSequential(new DriveStraightCommand(pythag(targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break; 
         case 2: //right
-          addSequential(new DriveStraightCommand(pythag(sideOffset-targetXOffset, distanceToShip-straightOnDistance), .8, 5000, false));
+          addSequential(new DriveStraightCommand(pythag(sideOffset-targetXOffset, distanceToShip-straightOnDistance), .6, 5000, false));
           break;
       }
     }
     if(left) {
       switch(startPos) {
         case 0: //left
-          addSequential(new TurnToAngleCommand(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
         case 1: //middle
-          addSequential(new TurnToAngleCommand(Math.atan2(targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break; 
         case 2: //right
-          addSequential(new TurnToAngleCommand(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
       }
     } else {
       switch(startPos) {
         case 0: //left
-          addSequential(new TurnToAngleCommand(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
         case 1: //middle
-          addSequential(new TurnToAngleCommand(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break; 
         case 2: //right
-          addSequential(new TurnToAngleCommand(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
           break;
       }
     }
-    addSequential(new DriveStraightCommand(straightOnDistance, .6, 5000, false));
+    addSequential(new DriveStraightCommand(straightOnDistance, .5, 5000, false));
   }
 
   public double pythag(double a, double b) {
