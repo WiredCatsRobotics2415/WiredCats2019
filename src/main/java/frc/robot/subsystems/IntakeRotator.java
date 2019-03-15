@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+import frc.robot.Robot;
 
 /**
  * Add your docs here.
@@ -24,7 +25,7 @@ public class IntakeRotator extends Subsystem {
   private WPI_TalonSRX rotator;
 
   public IntakeRotator() {
-    rotator = new WPI_TalonSRX(RobotMap.INTAKE_ROTATE);
+    rotator = Robot.getTalon(RobotMap.INTAKE_ROTATE);
 
     rotator.setInverted(false);
 

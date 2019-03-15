@@ -18,6 +18,13 @@ public class Constants {
     
     //PID Drivetrain
     public static final int kTimeoutMs = 30;
-    public static int VELOCITY_PID_INDEX = 0;
+    public static final int VELOCITY_PID_INDEX = 0;
     public static final PIDValue VELOCITY_PID = new PIDValue(1023/DRIVETRAIN_MAX_SPEED, 0.69, 0.0, 0.1);
+    //PID Turning
+    public static final boolean PIGEON_DEFAULT = true;
+    public static final int TURN_PID_INDEX = 1;
+    public static final int PIGEON_REMOTE_INDEX = 1;
+    public static final double PIGEON_UNITS2DEGREES = 1; //define
+    public static final double NAVX_UNITS2DEGREES = 1; //define
+    public static final PIDValue TURN_PID = new PIDValue(0, 0, 0, 0); //need to define
 }

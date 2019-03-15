@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+import frc.robot.Robot;
 
 import java.util.ArrayList;
 
@@ -33,10 +34,10 @@ public class Elevator extends Subsystem {
   private WPI_TalonSRX elevMaster;
 
   public Elevator() {
-    elevOne = new WPI_TalonSRX(RobotMap.ELEVATOR_ONE);
-    elevTwo = new WPI_TalonSRX(RobotMap.ELEVATOR_TWO);
-    elevThree = new WPI_TalonSRX(RobotMap.ELEVATOR_THREE);
-    elevFour = new WPI_TalonSRX(RobotMap.ELEVATOR_FOUR);
+    elevOne = Robot.getTalon(RobotMap.ELEVATOR_ONE);
+    elevTwo = Robot.getTalon(RobotMap.ELEVATOR_TWO);
+    elevThree = Robot.getTalon(RobotMap.ELEVATOR_THREE);
+    elevFour = Robot.getTalon(RobotMap.ELEVATOR_FOUR);
 
     shifter = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.ELEV_SWITCH_1, RobotMap.ELEV_SWITCH_2);
 

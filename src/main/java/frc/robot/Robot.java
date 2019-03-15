@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.XboxController;
@@ -22,6 +25,8 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Endgame;
 import frc.robot.subsystems.HatchManipulator;
 import frc.util.Limelight;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -51,6 +56,8 @@ public class Robot extends TimedRobot {
   public static Elevator elevator;
   public static Endgame endgame;
   public static HatchManipulator hatchManip;
+
+  public static Map<Integer,WPI_TalonSRX> robotTalons = new HashMap<Integer,WPI_TalonSRX>();
 
   public static Relay ringlight;
 
@@ -211,7 +218,6 @@ public class Robot extends TimedRobot {
 
         left += steering_adjust + distance_adjust;
         right -= steering_adjust - distance_adjust;
-
       }
       drivetrain.setMotors(left, right);
     } else {
@@ -280,6 +286,15 @@ public class Robot extends TimedRobot {
     if (gamepad.getRawButtonPressed(11)) { // right joystick
       hatchManip.stretchToggle();
     }
+  }
+
+  public static WPI_TalonSRX getTalon(int deviceNumber) {
+    if(robotTalons.containsKey(deviceNumber)) {
+      return robotTalons.get(deviceNumber);
+    }
+    WPI_TalonSRX newTalon = new WPI_TalonSRX(deviceNumber);
+    robotTalons.put(deviceNumber, newTalon);
+    return newTalon;
   }
 
   /**

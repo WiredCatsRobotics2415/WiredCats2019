@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+import frc.robot.Robot;
 
 /**
  * Add your docs here.
@@ -30,8 +31,8 @@ public class Endgame extends Subsystem {
     lSwitch = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_LEFT_PISTON_1, RobotMap.CLIMB_LEFT_PISTON_2);
     rSwitch = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_RIGHT_PISTON_1, RobotMap.CLIMB_RIGHT_PISTON_2);
 
-    lClimb = new WPI_TalonSRX(RobotMap.CLIMB_LEFT_MOTOR);
-    rClimb = new WPI_TalonSRX(RobotMap.CLIMB_RIGHT_MOTOR);
+    lClimb = Robot.getTalon(RobotMap.CLIMB_LEFT_MOTOR);
+    rClimb = Robot.getTalon(RobotMap.CLIMB_RIGHT_MOTOR);
 
     lClimb.setInverted(RobotMap.CLIMB_LEFT_DIRECTION);
     rClimb.setInverted(RobotMap.CLIMB_RIGHT_DIRECTION);
