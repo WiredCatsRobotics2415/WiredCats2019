@@ -12,11 +12,17 @@ import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.robot.auto.FrontCargoShip;
 import frc.robot.cheesy.CheesyDriveHelper;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -24,6 +30,7 @@ import frc.robot.subsystems.IntakeRotator;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Endgame;
 import frc.robot.subsystems.HatchManipulator;
+
 import frc.util.Limelight;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -40,10 +47,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private static final AutoChoice defaultAuto = AutoChoice.cameraControl;
+  private static final StartLocation defaultStart = StartLocation.middle;
+  private AutoChoice autoSelelected;
+  private StartLocation startLocationSelected;
+  private ShuffleboardTab autoSelector;
+  private SendableChooser<AutoChoice> autoChooser;
+  private SendableChooser<StartLocation> startLocation;
 
   public static XboxController gamepad;
   public static XboxController operator;
@@ -65,15 +75,51 @@ public class Robot extends TimedRobot {
 
   private boolean limelightOn;
 
-  /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
-   */
+  public enum AutoChoice {
+    leftFrontCargo("Left Front Cargo"), rightFrontCargo("Right Front Cargo"), cameraControl("Camera Control");
+    
+    private final String name;
+    private AutoChoice(String name) {
+      this.name = name;
+    }
+    @Override
+    public String toString() {
+      return name;
+    }
+  }
+
+  public enum StartLocation {
+    left("Left"), left_Level_2("Left Level 2"), middle("Middle"), right("Right"), right_Level_2("Right Level 2");
+    
+    private final String name;
+    private StartLocation(String name) {
+      this.name = name;
+    }
+    @Override
+    public String toString() {
+      return name;
+    }
+  }
+
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    autoSelector = Shuffleboard.getTab("Auto Selector");
+    autoChooser = new SendableChooser<AutoChoice>();
+    startLocation = new SendableChooser<StartLocation>();
+    autoChooser.setDefaultOption(defaultAuto.toString(), defaultAuto);
+    for(int i = 0; i < AutoChoice.values().length; i++) {
+      if(AutoChoice.values()[i] == defaultAuto) continue;
+      autoChooser.addOption(AutoChoice.values()[i].toString(), AutoChoice.values()[i]);
+    }
+    startLocation.setDefaultOption(defaultStart.toString(), defaultStart);
+    for(int i = 0; i < StartLocation.values().length; i++) {
+      if(StartLocation.values()[i] == defaultStart) continue;
+      startLocation.addOption(StartLocation.values()[i].toString(), StartLocation.values()[i]);
+    }
+    autoSelector.add(autoChooser);
+    autoSelector.add(startLocation);
+    autoSelelected = defaultAuto;
+    startLocationSelected = defaultStart;
 
     gamepad = new XboxController(0);
     operator = new XboxController(1);
@@ -104,7 +150,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    
   }
 
   /**
@@ -120,9 +165,26 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
+    autoSelelected = autoChooser.getSelected();
+    startLocationSelected = startLocation.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    System.out.println("Auto selected: " + autoSelelected.toString());
+    System.out.println("Start Position" + startLocationSelected.toString());
+    Command autoCommand = null;
+    switch(autoSelelected) {
+      case leftFrontCargo:
+        autoCommand = new FrontCargoShip(startLocationSelected, true); 
+        break;
+      case rightFrontCargo:
+        autoCommand = new FrontCargoShip(startLocationSelected, false);
+        break;
+      default:
+        autoCommand = null;
+        break;
+    }
+    if(autoCommand != null) {
+      autoCommand.start();
+    }
   }
 
   /**
@@ -130,14 +192,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    double leftY, rightX;
-    leftY = gamepad.getRawAxis(1);
-    rightX = -gamepad.getRawAxis(4);
+    if(autoSelelected != AutoChoice.cameraControl) {
+      if(gamepad.getAButton() == true) {
+        autoSelelected = AutoChoice.cameraControl;
+        Scheduler.getInstance().removeAll();
+      } else {
+        Scheduler.getInstance().run();
+      }
+    } else {
+      double leftY, rightX;
+      leftY = gamepad.getRawAxis(1);
+      rightX = -gamepad.getRawAxis(4);
 
-    boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
+      boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
-    //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
-    drivetrain.drive(leftY, rightX);
+      //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+      drivetrain.drive(leftY, rightX);
+    }
 
     double rotate = operator.getRawAxis(1);
     if (Math.abs(rotate) < Constants.DEADBAND) rotate = 0;
@@ -158,7 +229,6 @@ public class Robot extends TimedRobot {
     double elevatorspeed = operator.getRawAxis(1);
     if (Math.abs(elevatorspeed) < Constants.DEADBAND) elevatorspeed = 0;
     elevator.setElevMotors(7/drivetrain.getBusVoltage()*elevatorspeed);
-
   }
 
   /**
