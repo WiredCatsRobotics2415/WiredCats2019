@@ -331,11 +331,24 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   }
 
   public void zeroYaw() {
-    ahrs.zeroYaw();
+    if(ahrs != null) {
+      ahrs.zeroYaw();
+    }
+    if(pidgey != null) {
+      pidgey.setYaw(0, Constants.kTimeoutMs);
+    }
   }
 
   public double getYaw() {
-    return ahrs.getYaw();
+    if(Constants.PIGEON_DEFAULT && pidgey != null) {
+      double[] ypr = new double[3];
+      pidgey.getYawPitchRoll(ypr);
+      return ypr[0]*Constants.PIGEON_UNITS2DEGREES;
+    }
+    if(ahrs != null) {
+      return (double)ahrs.getYaw()*Constants.NAVX_UNITS2DEGREES;
+    }
+    return 0;
   }
 
   public double getBusVoltage() {
