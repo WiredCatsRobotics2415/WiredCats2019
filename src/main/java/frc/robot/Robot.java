@@ -70,20 +70,20 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     gamepad = new XboxController(0);
-    operator = new XboxController(1);
+    // operator = new XboxController(1);
     compressor = new Compressor(RobotMap.PCM_ID);
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
     drivetrain = new Drivetrain();
-    intake = new Intake();
-    intakeRotator = new IntakeRotator();
+    // intake = new Intake();
+    // intakeRotator = new IntakeRotator();
     elevator = new Elevator();
-    endgame = new Endgame();
+    // endgame = new Endgame();
     hatchManip = new HatchManipulator();
 
     // limelight = new Limelight();
-    compressor.stop();
+    // compressor.stop();
 
     limelightOn = false;
 
@@ -118,9 +118,14 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     // System.out.println("Auto selected: " + m_autoSelected);
-    intakeRotator.setBrakeMode(true);
+    // intakeRotator.setBrakeMode(true);
+
     elevator.setBrakeMode(true);
     elevator.shiftUp();
+    // endgame.flipIn();
+    // endgame.stop();
+    drivetrain.setBrakeMode(true);
+    hatchManip.stretch();
   }
 
   /**
@@ -129,45 +134,119 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     double leftY, rightX;
-    leftY = gamepad.getRawAxis(1);
-    rightX = -gamepad.getRawAxis(4);
+    leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
+    rightX = Math.abs(gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? gamepad.getRawAxis(2) : 0;
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
-    //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
-    drivetrain.drive(leftY, rightX);
+    if (gamepad.getRawButtonPressed(3)) {
+      System.out.println("LEFT: " + leftY);
+      drivetrain.printCurrent();
+    }
+    // drivetrain.drive(0.9*leftY, -0.9*rightX);
+    drivetrain.babyDrive(0.9*leftY, -0.9*rightX);
+    // if (gamepad.getBumperPressed(Hand.kRight)) {
+      // drivetrain.enableSafeties();
+      // drivetrain.disableSafeties();
+    // }
+    // System.out.println(leftY);
+    // drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
+    
+    // if (gamepad.getBumper(Hand.kLeft) ) {
+    //     intake.intake();
+    // } else if (gamepad.getBumper(Hand.kRight)) {
+    //     intake.outtake();
+    // } else {
+    //     intake.still();
+    // }
 
-    double rotate = operator.getRawAxis(1);
-    if (Math.abs(rotate) < Constants.DEADBAND) rotate = 0;
-    intakeRotator.setMotor(rotate);
+    // double leftTrigger, rightTrigger;
 
-    if (gamepad.getBumper(Hand.kLeft)) {
-        intake.intake();
-    } else if (gamepad.getBumper(Hand.kRight)) {
-        intake.outtake();
-    } else if (operator.getBumper(Hand.kLeft)) {
-        intake.intake();
-    } else if (operator.getBumper(Hand.kRight)) {
-        intake.outtake();
-    } else {
-        intake.still();
+    // leftTrigger = gamepad.getRawAxis(3);
+    // if (leftTrigger < 0) leftTrigger = 0;
+
+    // rightTrigger = gamepad.getRawAxis(4);
+    // if (rightTrigger < 0) rightTrigger = 0;
+
+    // if (leftTrigger > 0) {
+    //   intakeRotator.setMotor(-1*leftTrigger);
+    // } else if (rightTrigger > 0) {
+    //   intakeRotator.setMotor(rightTrigger);
+    // } else {
+    //   double rotate;
+    //   rotate = operator.getRawAxis(5);
+    //   if (Math.abs(rotate) < 0.15 ) rotate = 0;
+    //   intakeRotator.setMotor(rotate);
+    // }
+
+
+    double elevatorspeed = 0;
+    if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
+
+    if (gamepad.getPOV() == 0) {
+      elevatorspeed = -0.72;
+      // System.out.println("HELLO");
+    } else if (gamepad.getPOV() == 180) {
+      elevatorspeed = 0.5;
+    } else if (gamepad.getPOV() == -1) {
+      // elevatorspeed = -operator.getRawAxis(1);
+      // if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
     }
 
-    double elevatorspeed = operator.getRawAxis(1);
-    if (Math.abs(elevatorspeed) < Constants.DEADBAND) elevatorspeed = 0;
-    elevator.setElevMotors(7/drivetrain.getBusVoltage()*elevatorspeed);
+    // if (elevator.getTop() && elevatorspeed < 0) {
+    //   // System.out.println("Hello");
+    //   elevatorspeed = 0;
+    // }
 
-  }
+    // System.out.println(elevatorspeed);[]\
+
+    elevator.setElevMotors(elevatorspeed);
+
+    // if (gamepad.getRawButton(2)) {
+    //   elevator.shiftDown();
+    // } else if (gamepad.getRawButton(1)) {
+    //   elevator.shiftUp();
+    // }
+
+    // if (gamepad.getRawButton(14)) {
+    //   endgame.flipOut();
+    //   endgame.spin();
+    // } else if (gamepad.getRawButton(13)) { //PS button home button
+    //   endgame.flipIn();
+    //   endgame.stop();
+    // }
+
+
+    if (gamepad.getBumperPressed(Hand.kRight)) { //left joystick
+      hatchManip.extendToggle();
+    }
+    
+    if (gamepad.getBumperPressed(Hand.kLeft)) { // right joystick
+      hatchManip.stretchToggle();
+    }
+
+  
+}
+
+  /**
+   * This function is called periodically during test mode.
+   */
+
 
   /**
    * This function is called at the beginning of operator control.
    */
   @Override
   public void teleopInit() {
-    intakeRotator.setBrakeMode(true);
+    // intakeRotator.setBrakeMode(true);
     elevator.setBrakeMode(true);
     elevator.shiftUp();
-    endgame.flipIn();
+    // endgame.flipIn();
+    // endgame.stop();
+    drivetrain.setBrakeMode(true);
+    hatchManip.stretch();
+    
+    // drivetrain.enableSafeties();
   }
 
   /**
@@ -180,114 +259,91 @@ public class Robot extends TimedRobot {
     leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
     rightX = Math.abs(gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? gamepad.getRawAxis(2) : 0;
 
-    // boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
+    boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
-    if (limelightOn) {
-      double left = leftY + rightX;
-      double right = leftY - rightX;
-      NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-      NetworkTableEntry tx = table.getEntry("tx");
-      NetworkTableEntry ty = table.getEntry("ty");
-      NetworkTableEntry ta = table.getEntry("ta");
-
-      //read values periodically
-      double x = tx.getDouble(0.00);
-      double y = ty.getDouble(0.00);
-      double area = ta.getDouble(0.00);
-
-      //post to smart dashboard periodically
-      SmartDashboard.putNumber("LimelightX", x);
-      SmartDashboard.putNumber("LimelightY", y);
-      SmartDashboard.putNumber("LimelightArea", area);
-
-      if (limelight.isTarget()) {
-        double heading_error = x;
-        double distance_error = area - limelight.TARGET_AREA;
-        // System.out.println("HEADING ERROR: " + heading_error);
-        double steering_adjust = 0.0;
-        double distance_adjust = 0.0;
-
-        if (x > 1.0) {
-          steering_adjust = limelight.kP_TURN * heading_error; //+ limelight.min_command;
-        } else if (x < 1.0) {
-          steering_adjust = limelight.kP_TURN * heading_error; // - limelight.min_command;
-        }
-
-        distance_adjust = distance_error * limelight.kP_DRIVE;
-
-        left += steering_adjust + distance_adjust;
-        right -= steering_adjust - distance_adjust;
-
-      }
-      drivetrain.setMotors(left, right);
-    } else {
-      drivetrain.drive(leftY, rightX);
+    if (gamepad.getRawButtonPressed(3)) {
+      System.out.println("LEFT: " + leftY);
+      drivetrain.printCurrent();
     }
+    // drivetrain.drive(0.9*leftY, -0.9*rightX);
+    drivetrain.babyDrive(0.9*leftY, -0.9*rightX);
+    // if (gamepad.getBumperPressed(Hand.kRight)) {
+      // drivetrain.enableSafeties();
+      // drivetrain.disableSafeties();
+    // }
+    // System.out.println(leftY);
+    // drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
     
-    if (gamepad.getBumper(Hand.kLeft) ) {
-        intake.intake();
-    } else if (gamepad.getBumper(Hand.kRight)) {
-        intake.outtake();
-    } else {
-        intake.still();
-    }
+    // if (gamepad.getBumper(Hand.kLeft) ) {
+    //     intake.intake();
+    // } else if (gamepad.getBumper(Hand.kRight)) {
+    //     intake.outtake();
+    // } else {
+    //     intake.still();
+    // }
 
-    double leftTrigger, rightTrigger;
+    // double leftTrigger, rightTrigger;
 
-    leftTrigger = gamepad.getRawAxis(3);
-    if (leftTrigger < 0) leftTrigger = 0;
+    // leftTrigger = gamepad.getRawAxis(3);
+    // if (leftTrigger < 0) leftTrigger = 0;
 
-    rightTrigger = gamepad.getRawAxis(4);
-    if (rightTrigger < 0) rightTrigger = 0;
+    // rightTrigger = gamepad.getRawAxis(4);
+    // if (rightTrigger < 0) rightTrigger = 0;
 
-    if (leftTrigger > 0) {
-      intakeRotator.setMotor(-1*leftTrigger);
-    } else if (rightTrigger > 0) {
-      intakeRotator.setMotor(rightTrigger);
-    } else {
-      double rotate;
-      rotate = operator.getRawAxis(5);
-      if (Math.abs(rotate) < 0.15 ) rotate = 0;
-      intakeRotator.setMotor(rotate);
-    }
+    // if (leftTrigger > 0) {
+    //   intakeRotator.setMotor(-1*leftTrigger);
+    // } else if (rightTrigger > 0) {
+    //   intakeRotator.setMotor(rightTrigger);
+    // } else {
+    //   double rotate;
+    //   rotate = operator.getRawAxis(5);
+    //   if (Math.abs(rotate) < 0.15 ) rotate = 0;
+    //   intakeRotator.setMotor(rotate);
+    // }
 
 
-    double elevatorspeed = -operator.getRawAxis(1);
-    if (Math.abs(elevatorspeed) < 0.1) elevatorspeed = 0;
+    double elevatorspeed = 0;
+    if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
 
     if (gamepad.getPOV() == 0) {
-      elevatorspeed = 0.72;
+      elevatorspeed = -0.72;
       // System.out.println("HELLO");
     } else if (gamepad.getPOV() == 180) {
-      elevatorspeed = -0.5;
+      elevatorspeed = 0.5;
     } else if (gamepad.getPOV() == -1) {
-      elevatorspeed = -operator.getRawAxis(1);
+      // elevatorspeed = -operator.getRawAxis(1);
+      // if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
     }
 
-    // System.out.println(elevatorspeed);
+    // if (elevator.getTop() && elevatorspeed < 0) {
+    //   // System.out.println("Hello");
+    //   elevatorspeed = 0;
+    // }
+
+    // System.out.println(elevatorspeed);[]\
 
     elevator.setElevMotors(elevatorspeed);
 
-    if (gamepad.getRawButton(2)) {
-      elevator.shiftDown();
-    } else if (gamepad.getRawButton(1)) {
-      elevator.shiftUp();
-    }
+    // if (gamepad.getRawButton(2)) {
+    //   elevator.shiftDown();
+    // } else if (gamepad.getRawButton(1)) {
+    //   elevator.shiftUp();
+    // }
 
-    if (gamepad.getRawButton(14)) {
-      endgame.flipOut();
-      endgame.spin();
-    } else if (gamepad.getRawButton(13)) { //PS button home button
-      endgame.flipIn();
-      endgame.stop();
-    }
+    // if (gamepad.getRawButton(14)) {
+    //   endgame.flipOut();
+    //   endgame.spin();
+    // } else if (gamepad.getRawButton(13)) { //PS button home button
+    //   endgame.flipIn();
+    //   endgame.stop();
+    // }
 
 
-    if (gamepad.getRawButtonPressed(11)) { //left joystick
+    if (gamepad.getBumperPressed(Hand.kRight)) { //left joystick
       hatchManip.extendToggle();
     }
     
-    if (gamepad.getRawButtonPressed(12)) { // right joystick
+    if (gamepad.getBumperPressed(Hand.kLeft)) { // right joystick
       hatchManip.stretchToggle();
     }
 
@@ -298,22 +354,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    double leftY = gamepad.getRawAxis(1);
+    // double leftY = gamepad.getRawAxis(1);
     // drivetrain.setMotors(leftY, leftY);
     // endgame.testMotor(leftY);
-    if (gamepad.getBumperPressed(Hand.kLeft)) {
-      endgame.flipOut();
-    } else if (gamepad.getBumperPressed(Hand.kRight)) {
-      endgame.flipIn();
-    }
-    System.out.println(gamepad.getPOV());
+    // System.out.println(elevator.getTop());
   }
 
   @Override
   public void disabledPeriodic() {
-    intakeRotator.setBrakeMode(false);
-    elevator.setBrakeMode(false);
+    // intakeRotator.setBrakeMode(false);
+    // elevator.setBrakeMode(false);
     // System.out.println(drivetrain.getYaw());
     // System.out.println(gamepad.getPOV());
+    // System.out.println(elevator.getTop());
   }
 }

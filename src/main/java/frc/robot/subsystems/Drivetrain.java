@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -40,17 +41,25 @@ public class Drivetrain extends Subsystem implements PIDTunable{
 
   public Drivetrain(Drivemode drivemode) {
     lFront = new WPI_TalonSRX(RobotMap.LEFT_TALON_FRONT);
+    lFront.configFactoryDefault();
     rFront = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FRONT);
+    rFront.configFactoryDefault();
     lBack = new WPI_TalonSRX(RobotMap.LEFT_TALON_BACK);
+    lBack.configFactoryDefault();
     rBack = new WPI_TalonSRX(RobotMap.RIGHT_TALON_BACK);
+    rBack.configFactoryDefault();
+    // TalonSRXConfiguration test = new TalonSRXConfiguration();
+    // lFront.getAllConfigs(test);
+    // System.out.println("hi");
+    // System.out.println(test);
 
     lFront.setInverted(RobotMap.LEFT_TALON_FRONT_DIRECTION);
     lBack.setInverted(RobotMap.LEFT_TALON_BACK_DIRECTION);
     rFront.setInverted(RobotMap.RIGHT_TALON_FRONT_DIRECTION);
     rBack.setInverted(RobotMap.RIGHT_TALON_BACK_DIRECTION);
 
-    lFront.follow(lBack);
-    rFront.follow(rBack);
+    // lFront.follow(lBack);
+    // rFront.follow(rBack);
     lMaster = lBack;
     rMaster = rBack;
 
@@ -59,13 +68,34 @@ public class Drivetrain extends Subsystem implements PIDTunable{
     lMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     rMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
+    //lMaster.configOpenloopRamp(0);
+    //rMaster.configOpenloopRamp(0);
+
     setDrivemode(drivemode);
-    try {
-      ahrs = new AHRS(Port.kMXP);
-    } catch (RuntimeException ex) {
-      ahrs = null;
-    }
+    // try {
+    //   ahrs = new AHRS(Port.kMXP);
+    // } catch (RuntimeException ex) {
+    //   ahrs = null;
+    // }
   }
+
+  public void babyDrive(double throttle, double turn) {
+    lBack.set(ControlMode.PercentOutput, throttle+turn);
+    lFront.set(ControlMode.PercentOutput, throttle+turn);
+    rBack.set(ControlMode.PercentOutput, throttle-turn);
+    rFront.set(ControlMode.PercentOutput, throttle-turn);
+  }
+
+  public void enableSafeties() {
+    lMaster.setSafetyEnabled(true);
+    rMaster.setSafetyEnabled(true);
+  }
+
+  public void disableSafeties() {
+    lMaster.setSafetyEnabled(false);
+    rMaster.setSafetyEnabled(false);
+  }
+   
 
   public void setMotors(double left, double right) {
     switch(drivemode) {

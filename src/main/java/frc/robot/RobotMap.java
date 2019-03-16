@@ -40,8 +40,8 @@ public class RobotMap {
 	public static final boolean ELEVATOR_THREE_DIRECTION = false;
 	public static final boolean ELEVATOR_FOUR_DIRECTION = true;
 
-	public static final int ELEV_TOP = 1;
-	public static final int ELEV_BOT = 0;
+	public static final int ELEV_TOP = 0;
+	public static final int ELEV_BOT = 1;
 
 	public static final int ELEV_SWITCH_1 = 1;
 	public static final int ELEV_SWITCH_2 = 0;
