@@ -27,6 +27,22 @@ public class HatchManipulator extends Subsystem {
     stretchyBoi = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.STRETCHY_1, RobotMap.STRETCHY_2);
   }
 
+  public boolean isOut() {
+    if (stretchyBoi.get() == Value.kReverse) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean isStretched() {
+    if (extendyBoi.get() == Value.kReverse) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public void extend() {
     extendyBoi.set(Value.kForward);
   }

@@ -46,11 +46,11 @@ public class RobotMap {
 	public static final int ELEV_SWITCH_1 = 1;
 	public static final int ELEV_SWITCH_2 = 0;
 
-	public static final int EXTENDY_1 = 6;
-	public static final int EXTENDY_2 = 7;
+	public static final int EXTENDY_1 = 4;
+	public static final int EXTENDY_2 = 5;
 
-	public static final int STRETCHY_1 = 4;
-	public static final int STRETCHY_2 = 5;
+	public static final int STRETCHY_1 = 7;
+	public static final int STRETCHY_2 = 6;
 
 	public static final int INTAKE = 2;
 	public static final int INTAKE_ROTATE = 0;
