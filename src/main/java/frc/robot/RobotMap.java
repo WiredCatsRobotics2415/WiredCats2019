@@ -40,35 +40,27 @@ public class RobotMap {
 	public static final int ELEVATOR_FOUR = 4;
 
 	public static final boolean ELEVATOR_ONE_DIRECTION = false;
-	public static final boolean ELEVATOR_TWO_DIRECTION = false;
+	public static final boolean ELEVATOR_TWO_DIRECTION = true;
 	public static final boolean ELEVATOR_THREE_DIRECTION = false;
 	public static final boolean ELEVATOR_FOUR_DIRECTION = true;
 
-	public static final int ELEV_TOP = 1;
-	public static final int ELEV_BOT = 0;
+	public static final int ELEV_TOP = 0;
+	public static final int ELEV_BOT = 1;
 
 	public static final int ELEV_SWITCH_1 = 1;
 	public static final int ELEV_SWITCH_2 = 0;
 
-	//Hatch Manipulator
-	public static final int EXTENDY = 6;
-	public static final int STRETCHY = 8;
+	public static final int EXTENDY_1 = 4;
+	public static final int EXTENDY_2 = 5;
+
+	public static final int STRETCHY_1 = 7;
+	public static final int STRETCHY_2 = 6;
 
 	//Intake
 	public static final int INTAKE = 2;
 	public static final int INTAKE_ROTATE = 0;
 
 	//Climber
-	public static final int CLIMB_LEFT_MOTOR = 10;
-	public static final int CLIMB_RIGHT_MOTOR = 5;
-
-	public static final boolean CLIMB_LEFT_DIRECTION = false;
-	public static final boolean CLIMB_RIGHT_DIRECTION = true;
-
-	public static final int CLIMB_LEFT_PISTON_1 = 2;
-	public static final int CLIMB_LEFT_PISTON_2 = 3;
-
-	public static final int CLIMB_RIGHT_PISTON_1 = 4;
-	public static final int CLIMB_RIGHT_PISTON_2 = 5;
-
+	public static final int CLIMB_PISTON_1 = 2;
+	public static final int CLIMB_PISTON_2 = 3;
 }

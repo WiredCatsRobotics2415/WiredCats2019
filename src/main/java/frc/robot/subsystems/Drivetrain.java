@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.kauailabs.navx.frc.AHRS;
@@ -64,8 +65,8 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     rFront.setInverted(RobotMap.RIGHT_TALON_FRONT_DIRECTION);
     rBack.setInverted(RobotMap.RIGHT_TALON_BACK_DIRECTION);
 
-    lFront.follow(lBack);
-    rFront.follow(rBack);
+    // lFront.follow(lBack);
+    // rFront.follow(rBack);
     lMaster = lBack;
     rMaster = rBack;
 
@@ -126,6 +127,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     previousThrottle = 0.0;
     setDrivemode(drivemode);
   }
+   
 
   public void setMotors(double throttle, double turn) {
     switch(drivemode) {

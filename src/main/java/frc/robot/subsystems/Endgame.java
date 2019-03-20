@@ -7,15 +7,10 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
-import frc.robot.Robot;
 
 /**
  * Add your docs here.
@@ -24,43 +19,20 @@ public class Endgame extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  private DoubleSolenoid lSwitch, rSwitch;
-  private WPI_TalonSRX lClimb, rClimb, masterClimb;
+  private DoubleSolenoid endgameSolenoid;
 
   public Endgame() {
-    lSwitch = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_LEFT_PISTON_1, RobotMap.CLIMB_LEFT_PISTON_2);
-    rSwitch = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_RIGHT_PISTON_1, RobotMap.CLIMB_RIGHT_PISTON_2);
-
-    lClimb = Robot.getTalon(RobotMap.CLIMB_LEFT_MOTOR);
-    rClimb = Robot.getTalon(RobotMap.CLIMB_RIGHT_MOTOR);
-
-    lClimb.setInverted(RobotMap.CLIMB_LEFT_DIRECTION);
-    rClimb.setInverted(RobotMap.CLIMB_RIGHT_DIRECTION);
-
-    rClimb.follow(lClimb);
-
-    masterClimb = lClimb;
-    masterClimb.setNeutralMode(NeutralMode.Brake);
-    masterClimb.set(ControlMode.PercentOutput, 0);
-
-  }
-
-  public void stop() {
-    masterClimb.set(0);
-  }
-
-  public void spin() {
-    masterClimb.set(0.8);
+    endgameSolenoid = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_PISTON_1, RobotMap.CLIMB_PISTON_2);
   }
 
   public void flipOut() {
-    lSwitch.set(Value.kForward);
-    rSwitch.set(Value.kForward);
+    // lSwitch.set(Value.kForward);
+    endgameSolenoid.set(Value.kForward);
   }
 
   public void flipIn() {
-    lSwitch.set(Value.kReverse);
-    rSwitch.set(Value.kReverse);
+    // lSwitch.set(Value.kReverse);
+    endgameSolenoid.set(Value.kReverse);
   }
 
   @Override

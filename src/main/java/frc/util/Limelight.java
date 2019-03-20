@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  */
 public class Limelight {
 	private static NetworkTableInstance table = null;
-	public float kP_TURN = -0.2f;
+	public float kP_TURN = -0.18f;
 	public float kP_DRIVE = 0.05f;
     public float min_command = 0.05f;
     public float TARGET_AREA = 9.0f;
