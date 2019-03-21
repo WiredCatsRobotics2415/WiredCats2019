@@ -119,26 +119,26 @@ public class Robot extends TimedRobot {
       if(StartLocation.values()[i] == defaultStart) continue;
       startLocation.addOption(StartLocation.values()[i].toString(), StartLocation.values()[i]);
     }
-    autoSelector.add(autoChooser);
-    autoSelector.add(startLocation);
+    autoSelector.add("Auto Chooser", autoChooser);
+    autoSelector.add("Start Location", startLocation);
     autoSelelected = defaultAuto;
     startLocationSelected = defaultStart;
 
     gamepad = new XboxController(0);
     // operator = new XboxController(1);
-    compressor = new Compressor(RobotMap.PCM_ID);
+    //compressor = new Compressor(RobotMap.PCM_ID);
 
     cheesyDriveHelper = new CheesyDriveHelper();
 
     drivetrain = new Drivetrain();
-    intake = new Intake();
+    /*intake = new Intake();
     intakeRotator = new IntakeRotator();
     elevator = new Elevator();
     endgame = new Endgame();
-    hatchManip = new HatchManipulator();
+    hatchManip = new HatchManipulator();*/
 
     // limelight = new Limelight();
-    compressor.stop();
+    //compressor.stop();
 
     limelightOn = false;
 
@@ -307,7 +307,7 @@ public class Robot extends TimedRobot {
 
     //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
     drivetrain.drive(leftY, rightX);
-    double leftTrigger, rightTrigger;
+    /*double leftTrigger, rightTrigger;
 
     leftTrigger = gamepad.getRawAxis(3);
     if (leftTrigger < 0) leftTrigger = 0;
@@ -358,7 +358,7 @@ public class Robot extends TimedRobot {
   
     if (gamepad.getBumperPressed(Hand.kLeft)) { // right joystick
       hatchManip.stretchToggle();
-    }
+    }*/
   }
 
   public static WPI_TalonSRX getTalon(int deviceNumber) {

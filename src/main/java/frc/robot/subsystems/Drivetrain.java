@@ -200,7 +200,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     switch(this.drivemode) {
       case percentOutput:
         pidValues = new PIDValue[0];
-        setRamping(0.25);
+        setRamping(.1);
         break;
       case velocity:
         pidValues = new PIDValue[1];
