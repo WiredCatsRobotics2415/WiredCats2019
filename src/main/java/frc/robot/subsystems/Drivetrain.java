@@ -17,8 +17,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.kauailabs.navx.frc.AHRS;
 
-import org.junit.Test.None;
-
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
@@ -202,6 +200,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     switch(this.drivemode) {
       case percentOutput:
         pidValues = new PIDValue[0];
+        setRamping(0.25);
         break;
       case velocity:
         pidValues = new PIDValue[1];
@@ -241,6 +240,11 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
         pidValues = new PIDValue[0];
         break;
     }
+  }
+
+  public void setRamping(double secondsFromNeutralToFull) {
+    lMaster.configOpenloopRamp(secondsFromNeutralToFull);
+    rMaster.configOpenloopRamp(secondsFromNeutralToFull);
   }
 
   @Override

@@ -138,7 +138,7 @@ public class Robot extends TimedRobot {
     hatchManip = new HatchManipulator();
 
     // limelight = new Limelight();
-    //compressor.stop();
+    compressor.stop();
 
     limelightOn = false;
 
