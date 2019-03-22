@@ -81,10 +81,12 @@ public class Robot extends TimedRobot {
     // intakeRotator = new IntakeRotator();
     elevator = new Elevator();
     // endgame = new Endgame();
-    // hatchManip = new HatchManipulator();
+    hatchManip = new HatchManipulator();
 
     // limelight = new Limelight();
-    compressor.stop();
+    // compressor.start();
+    compressor.setClosedLoopControl(true);
+    // compressor.stop();
 
     limelightOn = false;
 
@@ -123,7 +125,7 @@ public class Robot extends TimedRobot {
     // intakeRotator.setBrakeMode(true);
 
     elevator.setBrakeMode(true);
-    elevator.shiftUp();
+    // elevator.shiftUp();
     // endgame.flipIn();
     // endgame.stop();
     drivetrain.setBrakeMode(true);
@@ -146,7 +148,7 @@ public class Robot extends TimedRobot {
       drivetrain.printCurrent();
     }
     // drivetrain.drive(0.9*leftY, -0.9*rightX);
-    drivetrain.babyDrive(0.9*leftY, -0.9*rightX);
+    // drivetrain.babyDrive(0.9*leftY, -0.9*rightX);
     // if (gamepad.getBumperPressed(Hand.kRight)) {
       // drivetrain.enableSafeties();
       // drivetrain.disableSafeties();
@@ -154,33 +156,6 @@ public class Robot extends TimedRobot {
     // System.out.println(leftY);
     // drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
     
-    // if (gamepad.getBumper(Hand.kLeft)
-    //     intake.intake();
-    // } else if (gamepad.getBumper(Hand.kRight)) {
-    //     intake.outtake();
-    // } else {
-    //     intake.still();
-    // }
-
-    // double leftTrigger, rightTrigger;
-
-    // leftTrigger = gamepad.getRawAxis(3);
-    // if (leftTrigger < 0) leftTrigger = 0;
-
-    // rightTrigger = gamepad.getRawAxis(4);
-    // if (rightTrigger < 0) rightTrigger = 0;
-
-    // if (leftTrigger > 0) {
-    //   intakeRotator.setMotor(-1*leftTrigger);
-    // } else if (rightTrigger > 0) {
-    //   intakeRotator.setMotor(rightTrigger);
-    // } else {
-    //   double rotate;
-    //   rotate = operator.getRawAxis(5);
-    //   if (Math.abs(rotate) < 0.15 ) rotate = 0;
-    //   intakeRotator.setMotor(rotate);
-    // }
-
 
     // double elevatorspeed = 0;
     // if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
@@ -207,14 +182,6 @@ public class Robot extends TimedRobot {
     //   elevator.shiftDown();
     // } else if (gamepad.getRawButton(1)) {
     //   elevator.shiftUp();
-    // }
-
-    // if (gamepad.getRawButton(14)) {
-    //   endgame.flipOut();
-    //   endgame.spin();
-    // } else if (gamepad.getRawButton(13)) { //PS button home button
-    //   endgame.flipIn();
-    //   endgame.stop();
     // }
 
 
@@ -248,6 +215,8 @@ public class Robot extends TimedRobot {
     // hatchManip.stretch();
     
     // drivetrain.enableSafeties();
+    // compressor.start();
+    
   }
 
   /**
@@ -255,10 +224,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    System.out.println(compressor.enabled());
+    System.out.println(compressor.getCompressorCurrent());
 
     double leftY, rightX;
     leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
-    rightX = Math.abs(gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? gamepad.getRawAxis(2) : 0;
+    rightX = Math.abs(gamepad.getRawAxis(4)) > drivetrain.DEADBAND ? gamepad.getRawAxis(4) : 0;
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
@@ -266,8 +237,16 @@ public class Robot extends TimedRobot {
       System.out.println("LEFT: " + leftY);
       drivetrain.printCurrent();
     }
-    // drivetrain.drive(0.9*leftY, -0.9*rightX);
-    drivetrain.babyDrive(0.9*leftY, -0.9*rightX);
+
+    if (gamepad.getRawButtonPressed(1)) {
+      hatchManip.stretchToggle();
+    } else if (gamepad.getRawButtonPressed(2)) {
+      hatchManip.extendToggle();
+    }
+    // drivetrain.drive(0.9*leftY, -0.9*righ/tX);
+    drivetrain.babyDrive(-0.9*leftY, 0.9*rightX);
+    // System.out.println("ELEV: " + elevator.getVelocity());
+    // System.out.println("L: " + drivetrain.getVelocity()[0] + "R: " + drivetrain.getVelocity()[1]);
     // if (gamepad.getBumperPressed(Hand.kRight)) {
       // drivetrain.enableSafeties();
       // drivetrain.disableSafeties();
@@ -304,25 +283,17 @@ public class Robot extends TimedRobot {
 
 
     double elevatorspeed = 0;
+    // System.out.println(leftY);
     // if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
 
-    // if (gamepad.getPOV() == 90) {
-    //   //elevatorspeed = -0.72;
-    //   // System.out.println("HELLO");
-    // } else if (gamepad.getPOV() == 270) {
-    //   elevatorspeed = 0.5;
-    // } else {
+    if (gamepad.getBumper(Hand.kLeft)) {
+      elevatorspeed = -0.5;
+      // System.out.println("HELLO");
+    } else if (gamepad.getBumper(Hand.kRight)) {
+      elevatorspeed = 0.5;
+    }
 
-    // }
-
-    // if (elevator.getTop() && elevatorspeed < 0) {
-    //   // System.out.println("Hello");
-    //   elevatorspeed = 0;
-    // }
-
-    // System.out.println(elevatorspeed);[]\
-
-    // elevator.setElevMotors(elevatorspeed);
+    elevator.setElevMotors(elevatorspeed);
 
     // if (gamepad.getRawButton(2)) {
     //   elevator.shiftDown();
@@ -354,10 +325,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    // double leftY = gamepad.getRawAxis(1);
+    double leftY = gamepad.getRawAxis(1);
     // drivetrain.setMotors(leftY, leftY);
     // endgame.testMotor(leftY);
-    // System.out.println(elevator.getTop());
+    System.out.println(leftY);
+    drivetrain.testMotor(leftY);
   }
 
   @Override
