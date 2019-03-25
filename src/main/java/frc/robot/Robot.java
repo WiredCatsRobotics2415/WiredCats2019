@@ -224,8 +224,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    System.out.println(compressor.enabled());
-    System.out.println(compressor.getCompressorCurrent());
+    // System.out.println(compressor.enabled());
+    // System.out.println(compressor.getCompressorCurrent());
 
     double leftY, rightX;
     leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
