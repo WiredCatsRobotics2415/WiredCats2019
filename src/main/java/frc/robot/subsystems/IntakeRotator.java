@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 
@@ -22,6 +23,7 @@ public class IntakeRotator extends Subsystem {
   // here. Call these from Commands.
 
   private WPI_TalonSRX rotator;
+  private Solenoid holder;
 
   public IntakeRotator() {
     rotator = new WPI_TalonSRX(RobotMap.INTAKE_ROTATE);
@@ -31,7 +33,17 @@ public class IntakeRotator extends Subsystem {
     rotator.set(ControlMode.PercentOutput, 0);
     rotator.setNeutralMode(NeutralMode.Brake);
 
+    // holder = new Solenoid(RobotMap.PCM_ID, RobotMap.INTAKE_HOLDER);
+
   }
+
+  // public void holdIn() {
+  //   holder.set(true);
+  // }
+
+  // public void sendOut() {
+  //   holder.set(false);
+  // }
 
   public void rotateUp() {
     rotator.set(-1);

@@ -28,7 +28,7 @@ public class Elevator extends Subsystem {
   // here. Call these from Commands.
 
   private WPI_TalonSRX elevOne, elevTwo, elevThree, elevFour;
-  // private DoubleSolenoid shifter;
+  private DoubleSolenoid shifter;
   private DigitalInput bottom, top;
   
   private WPI_TalonSRX elevMaster;
@@ -39,7 +39,7 @@ public class Elevator extends Subsystem {
     elevThree = new WPI_TalonSRX(RobotMap.ELEVATOR_THREE);
     elevFour = new WPI_TalonSRX(RobotMap.ELEVATOR_FOUR);
 
-    // shifter = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.ELEV_SWITCH_1, RobotMap.ELEV_SWITCH_2);
+    shifter = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.ELEV_SWITCH_1, RobotMap.ELEV_SWITCH_2);
 
     elevOne.setInverted(RobotMap.ELEVATOR_ONE_DIRECTION);
     elevTwo.setInverted(RobotMap.ELEVATOR_TWO_DIRECTION);
@@ -102,21 +102,21 @@ public class Elevator extends Subsystem {
     elevMaster.set(0);
   }
 
-  // public void shift() {
-  //   if (shifter.get() == Value.kForward) {
-  //     shifter.set(Value.kReverse);
-  //   } else {
-  //     shifter.set(Value.kForward);
-  //   }
-  // }
+  public void shift() {
+    if (shifter.get() == Value.kForward) {
+      shifter.set(Value.kReverse);
+    } else {
+      shifter.set(Value.kForward);
+    }
+  }
 
-  // public void shiftUp() {
-  //   shifter.set(Value.kReverse);
-  // }
+  public void shiftUp() {
+    shifter.set(Value.kReverse);
+  }
 
-  // public void shiftDown() {
-  //   shifter.set(Value.kForward);
-  // }
+  public void shiftDown() {
+    shifter.set(Value.kForward);
+  }
 
   @Override
   public void initDefaultCommand() {

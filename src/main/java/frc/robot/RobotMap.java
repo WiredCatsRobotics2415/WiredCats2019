@@ -54,6 +54,7 @@ public class RobotMap {
 
 	public static final int INTAKE = 2;
 	public static final int INTAKE_ROTATE = 0;
+	public static final int INTAKE_HOLDER = 9;
 
 	public static final int CLIMB_LEFT_MOTOR = 10;
 	public static final int CLIMB_RIGHT_MOTOR = 5;
@@ -63,5 +64,6 @@ public class RobotMap {
 
 	public static final int CLIMB_RIGHT_PISTON_1 = 2;
 	public static final int CLIMB_RIGHT_PISTON_2 = 3;
+
 
 }

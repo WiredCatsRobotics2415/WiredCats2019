@@ -77,8 +77,8 @@ public class Robot extends TimedRobot {
     cheesyDriveHelper = new CheesyDriveHelper();
 
     drivetrain = new Drivetrain();
-    // intake = new Intake();
-    // intakeRotator = new IntakeRotator();
+    intake = new Intake();
+    intakeRotator = new IntakeRotator();
     elevator = new Elevator();
     // endgame = new Endgame();
     hatchManip = new HatchManipulator();
@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
     // limelight = new Limelight();
     // compressor.start();
     compressor.setClosedLoopControl(true);
-    // compressor.stop();
+    compressor.stop();
 
     limelightOn = false;
 
@@ -147,51 +147,7 @@ public class Robot extends TimedRobot {
       System.out.println("LEFT: " + leftY);
       drivetrain.printCurrent();
     }
-    // drivetrain.drive(0.9*leftY, -0.9*rightX);
-    // drivetrain.babyDrive(0.9*leftY, -0.9*rightX);
-    // if (gamepad.getBumperPressed(Hand.kRight)) {
-      // drivetrain.enableSafeties();
-      // drivetrain.disableSafeties();
-    // }
-    // System.out.println(leftY);
-    // drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
-    
-
-    // double elevatorspeed = 0;
-    // if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
-
-    // if (gamepad.getPOV() == 90) {
-    //   elevatorspeed = -0.4;
-    //   // System.out.println("HELLO");
-    // } else if (gamepad.getPOV() == 270) {
-    //   elevatorspeed = 0.4;
-    // } else {
-      
-    // }
-
-    // if (elevator.getTop() && elevatorspeed < 0) {
-    //   // System.out.println("Hello");
-    //   elevatorspeed = 0;
-    // }
-
-    // System.out.println(elevatorspeed);[]\
-
-    // elevator.setElevMotors(elevatorspeed);
-
-    // if (gamepad.getRawButton(2)) {
-    //   elevator.shiftDown();
-    // } else if (gamepad.getRawButton(1)) {
-    //   elevator.shiftUp();
-    // }
-
-
-    // if (gamepad.getBumperPressed(Hand.kRight)) { //left joystick
-    //   hatchManip.extendToggle();
-    // }
-    
-    // if (gamepad.getBumperPressed(Hand.kLeft)) { // right joystick
-    //   hatchManip.stretchToggle();
-    // }
+   
 
   
 }
@@ -229,7 +185,7 @@ public class Robot extends TimedRobot {
 
     double leftY, rightX;
     leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
-    rightX = Math.abs(gamepad.getRawAxis(4)) > drivetrain.DEADBAND ? gamepad.getRawAxis(4) : 0;
+    rightX = Math.abs(gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? gamepad.getRawAxis(2) : 0;
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
@@ -238,22 +194,17 @@ public class Robot extends TimedRobot {
       drivetrain.printCurrent();
     }
 
-    if (gamepad.getRawButtonPressed(1)) {
-      hatchManip.stretchToggle();
-    } else if (gamepad.getRawButtonPressed(2)) {
-      hatchManip.extendToggle();
-    }
     // drivetrain.drive(0.9*leftY, -0.9*righ/tX);
     drivetrain.babyDrive(-0.9*leftY, 0.9*rightX);
-    // System.out.println("ELEV: " + elevator.getVelocity());
-    // System.out.println("L: " + drivetrain.getVelocity()[0] + "R: " + drivetrain.getVelocity()[1]);
-    // if (gamepad.getBumperPressed(Hand.kRight)) {
-      // drivetrain.enableSafeties();
-      // drivetrain.disableSafeties();
+
+    // if (gamepad.getRawButtonPressed(11)) {
+    //   System.out.println("EXTEND");
+    //   hatchManip.extendToggle();
+    // } else if (gamepad.getRawButtonPressed(12)) {
+    //   System.out.println("STRETCH");
+    //   hatchManip.stretchToggle();
     // }
-    // System.out.println(leftY);
-    // drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));
-    
+
     // if (gamepad.getBumper(Hand.kLeft) ) {
     //     intake.intake();
     // } else if (gamepad.getBumper(Hand.kRight)) {
@@ -270,15 +221,12 @@ public class Robot extends TimedRobot {
     // rightTrigger = gamepad.getRawAxis(4);
     // if (rightTrigger < 0) rightTrigger = 0;
 
-    // if (leftTrigger > 0) {
-    //   intakeRotator.setMotor(-1*leftTrigger);
-    // } else if (rightTrigger > 0) {
-    //   intakeRotator.setMotor(rightTrigger);
+    // if (gamepad.getRawButton(7)) {
+    //   intakeRotator.setMotor(-1);
+    // } else if (gamepad.getRawButton(8)) {
+    //   intakeRotator.setMotor(1);
     // } else {
-    //   double rotate;
-    //   rotate = operator.getRawAxis(5);
-    //   if (Math.abs(rotate) < 0.15 ) rotate = 0;
-    //   intakeRotator.setMotor(rotate);
+      
     // }
 
 
@@ -286,36 +234,31 @@ public class Robot extends TimedRobot {
     // System.out.println(leftY);
     // if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
 
-    if (gamepad.getBumper(Hand.kLeft)) {
+    if (gamepad.getPOV() == 90) {
       elevatorspeed = -0.5;
       // System.out.println("HELLO");
-    } else if (gamepad.getBumper(Hand.kRight)) {
+    } else if (gamepad.getPOV() == 270) {
       elevatorspeed = 0.5;
     }
 
     elevator.setElevMotors(elevatorspeed);
 
-    // if (gamepad.getRawButton(2)) {
+    // if (gamepad.getRawButton(2)) { //x
     //   elevator.shiftDown();
-    // } else if (gamepad.getRawButton(1)) {
+    // } else if (gamepad.getRawButton(1)) { //square
     //   elevator.shiftUp();
     // }
 
-    // if (gamepad.getRawButton(14)) {
+    // if (gamepad.getRawButtonPressed(14)) { //touchpad
     //   endgame.flipOut();
-    //   endgame.spin();
-    // } else if (gamepad.getRawButton(13)) { //PS button home button
+    // } else if (gamepad.getRawButtonPressed(13)) { //PS button home button
     //   endgame.flipIn();
-    //   endgame.stop();
     // }
 
-
-    // if (gamepad.getBumperPressed(Hand.kRight)) { //left joystick
-    //   hatchManip.extendToggle();
-    // }
-    
-    // if (gamepad.getBumperPressed(Hand.kLeft)) { // right joystick
-    //   hatchManip.stretchToggle();
+    // if (gamepad.getRawButtonPressed(3)) { //circle
+    //   intakeRotator.sendOut();
+    // } else if (gamepad.getRawButtonPressed(4)) { //triangle
+    //   intakeRotator.holdIn();
     // }
 
   }
