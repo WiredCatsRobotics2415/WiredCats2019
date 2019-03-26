@@ -127,7 +127,6 @@ public class Robot extends TimedRobot {
     elevator.setBrakeMode(true);
     // elevator.shiftUp();
     // endgame.flipIn();
-    // endgame.stop();
     drivetrain.setBrakeMode(true);
     // hatchManip.retract();
   }
