@@ -53,7 +53,7 @@ public class IntakeRotator extends Subsystem {
     rotator.set(0.5);
   }
 
-  public void still() {
+  public void stop() {
     rotator.set(0);
   }
 

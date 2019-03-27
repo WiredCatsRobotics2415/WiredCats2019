@@ -58,8 +58,7 @@ public class Robot extends TimedRobot {
   private SendableChooser<AutoChoice> autoChooser;
   private SendableChooser<StartLocation> startLocation;
 
-  public static XboxController gamepad;
-  public static XboxController operator;
+  public static OI oi;
   public static Compressor compressor;
   public static CheesyDriveHelper cheesyDriveHelper;
 
@@ -124,7 +123,7 @@ public class Robot extends TimedRobot {
     autoSelelected = defaultAuto;
     startLocationSelected = defaultStart;
 
-    gamepad = new XboxController(0);
+    oi = new OI(new XboxController(0));
     // operator = new XboxController(1);
     compressor = new Compressor(RobotMap.PCM_ID);
 
@@ -247,12 +246,12 @@ public class Robot extends TimedRobot {
   }
 
   private void controllerDrivetrain() {
-    double leftY, rightX;
-    leftY = gamepad.getRawAxis(1);
-    rightX = -gamepad.getRawAxis(4);
+    double throttle, turn;
+    throttle = oi.getDriveThrottle();
+    turn = oi.getDriveTurn();
 
     //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
-    drivetrain.drive(leftY, rightX);
+    drivetrain.drive(throttle, turn);
   }
 
   private void controllerIntake() {
