@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
 
   public static Limelight limelight;
 
-  private boolean limelightOn;
+  private boolean limelightOn = false, endgameOn = false;
 
   public enum AutoChoice {
     leftFrontCargo("Left Front Cargo"), rightFrontCargo("Right Front Cargo"), passLine("Pass Line"), cameraControl("Camera Control");
@@ -171,6 +171,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    endgameOn = false;
+
     autoSelelected = autoChooser.getSelected();
     startLocationSelected = startLocation.getSelected();
     System.out.println("Auto selected: " + autoSelelected.toString());
@@ -226,6 +228,7 @@ public class Robot extends TimedRobot {
     // endgame.flipIn();
     // endgame.stop();
     drivetrain.setBrakeMode(true);
+    endgameOn = false;
     // hatchManip.stretch();
     
     // drivetrain.enableSafeties();
@@ -239,11 +242,15 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     controllerDrivetrain();
-    controllerElevator();
     controllerHatchMan();
     controllerIntake();
     controllerIntakeRotator();
     controllerEndgame();
+    if (endgameOn) {
+      controllerEndgameElevator();
+    } else {
+      controllerElevator();
+    }
   }
 
   private void controllerDrivetrain() {
@@ -275,6 +282,8 @@ public class Robot extends TimedRobot {
     double area = ta.getDouble(0.00);
 
     if (limelight.isTarget()) {
+      System.out.println("HEADING ERROR: " + x);
+
       double heading_error = x;
       double distance_error = area - limelight.TARGET_AREA;
       // System.out.println("HEADING ERROR: " + heading_error);
@@ -294,11 +303,11 @@ public class Robot extends TimedRobot {
 
       System.out.println("STEERING ADJUST: " + steering_adjust);
 
-      System.out.println("DISTANCE: " + distance_error);
+      // System.out.println("DISTANCE: " + distance_error);
 
     }
 
-    drivetrain.setMotors(left, right);
+    drivetrain.setMotorsInd(left, right);
   }
 
   private void controllerIntake() {
@@ -340,19 +349,33 @@ public class Robot extends TimedRobot {
     }
   }
 
+  private void controllerEndgameElevator() {
+    if (gamepad.getPOV() == 90) {
+      elevator.endgameLower();
+    } else if (gamepad.getPOV() == 270) {
+      elevator.liftUp();
+    } else {
+      elevator.stop();
+    }
+  }
+
   private void controllerEndgame() {
     if (gamepad.getRawButton(14)) {
       endgame.flipOut();
+      elevator.shiftDown();
+      endgameOn = true;
     } else if (gamepad.getRawButton(13)) { //PS button home button
       endgame.flipIn();
+      elevator.shiftUp();
+      endgameOn = false;
     }
   }
 
   private void controllerHatchMan() {
-    if (gamepad.getBumperPressed(Hand.kRight)) { //left joystick
+    if (gamepad.getRawButtonPressed(11)) { //left joystick
       hatchManip.extendToggle();
     }
-    if (gamepad.getBumperPressed(Hand.kLeft)) { // right joystick
+    if (gamepad.getRawButtonPressed(12)) { // right joystick
       hatchManip.stretchToggle();
     }
   }
