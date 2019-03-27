@@ -121,6 +121,9 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
       }
       lMaster.configSelectedFeedbackCoefficient(Constants.PIGEON_UNITS2DEGREES);
     }
+
+    lMaster.configOpenloopRamp(0.1);
+    rMaster.configOpenloopRamp(0.1);
     
     pidController = new PIDController(0, 0, 0, 0, this, this, 0.02);
     pidSourceType = PIDSourceType.kDisplacement;
