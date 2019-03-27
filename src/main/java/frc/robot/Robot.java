@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
     // limelight = new Limelight();
     // compressor.start();
     compressor.setClosedLoopControl(true);
-    compressor.stop();
+    // compressor.stop();
 
     limelightOn = false;
 
@@ -168,6 +168,7 @@ public class Robot extends TimedRobot {
     // endgame.stop();
     drivetrain.setBrakeMode(true);
     // hatchManip.stretch();
+    // hatchManip.extend();
     
     // drivetrain.enableSafeties();
     // compressor.start();
@@ -184,7 +185,7 @@ public class Robot extends TimedRobot {
 
     double leftY, rightX;
     leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
-    rightX = Math.abs(gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? gamepad.getRawAxis(2) : 0;
+    rightX = Math.abs(-gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? -gamepad.getRawAxis(2) : 0;
 
     boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
@@ -193,16 +194,16 @@ public class Robot extends TimedRobot {
       drivetrain.printCurrent();
     }
 
-    // drivetrain.drive(0.9*leftY, -0.9*righ/tX);
+    // drivetrain.drive(0.9*leftY, -0.9*rightX);
     drivetrain.babyDrive(-0.9*leftY, 0.9*rightX);
 
-    // if (gamepad.getRawButtonPressed(11)) {
-    //   System.out.println("EXTEND");
-    //   hatchManip.extendToggle();
-    // } else if (gamepad.getRawButtonPressed(12)) {
-    //   System.out.println("STRETCH");
-    //   hatchManip.stretchToggle();
-    // }
+    if (gamepad.getRawButtonPressed(11)) {
+      System.out.println("EXTEND");
+      hatchManip.extendToggle();
+    } else if (gamepad.getRawButtonPressed(12)) {
+      System.out.println("STRETCH");
+      hatchManip.stretchToggle();
+    }
 
     // if (gamepad.getBumper(Hand.kLeft) ) {
     //     intake.intake();
@@ -234,10 +235,10 @@ public class Robot extends TimedRobot {
     // if (Math.abs(elevatorspeed) < 0.15) elevatorspeed = 0;
 
     if (gamepad.getPOV() == 90) {
-      elevatorspeed = -0.5;
+      elevatorspeed = -0.7;
       // System.out.println("HELLO");
     } else if (gamepad.getPOV() == 270) {
-      elevatorspeed = 0.5;
+      elevatorspeed = 0.7;
     }
 
     elevator.setElevMotors(elevatorspeed);

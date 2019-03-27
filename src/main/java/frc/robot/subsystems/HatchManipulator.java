@@ -28,7 +28,7 @@ public class HatchManipulator extends Subsystem {
   }
 
   public boolean isOut() {
-    if (stretchyBoi.get() == Value.kReverse) {
+    if (stretchyBoi.get() == Value.kForward) {
       return true;
     } else {
       return false;
@@ -36,7 +36,7 @@ public class HatchManipulator extends Subsystem {
   }
 
   public boolean isStretched() {
-    if (extendyBoi.get() == Value.kReverse) {
+    if (extendyBoi.get() == Value.kForward) {
       return true;
     } else {
       return false;

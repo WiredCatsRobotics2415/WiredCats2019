@@ -52,7 +52,7 @@ public class RobotMap {
 	public static final int STRETCHY_1 = 2;
 	public static final int STRETCHY_2 = 3;
 
-	public static final int INTAKE = 2;
+	public static final int INTAKE = 19;
 	public static final int INTAKE_ROTATE = 0;
 	public static final int INTAKE_HOLDER = 9;
 
