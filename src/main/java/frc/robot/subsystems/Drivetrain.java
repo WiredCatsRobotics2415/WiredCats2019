@@ -382,6 +382,10 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     System.out.println();
   }
 
+  public void testMotor(double speed) {
+    // rFront.set(speed);
+  }
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.

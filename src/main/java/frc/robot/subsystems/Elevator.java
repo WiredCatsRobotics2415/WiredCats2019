@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -29,7 +30,7 @@ public class Elevator extends Subsystem {
 
   private WPI_TalonSRX elevOne, elevTwo, elevThree, elevFour;
   private DoubleSolenoid shifter;
-  private DigitalInput bottom, top;
+  private DigitalInput bottom;
   
   private WPI_TalonSRX elevMaster;
 
@@ -46,14 +47,15 @@ public class Elevator extends Subsystem {
     elevThree.setInverted(RobotMap.ELEVATOR_THREE_DIRECTION);
     elevFour.setInverted(RobotMap.ELEVATOR_FOUR_DIRECTION);
 
-    top = new DigitalInput(RobotMap.ELEV_TOP);
     bottom = new DigitalInput(RobotMap.ELEV_BOT);
 
-    elevTwo.follow(elevOne);
-    elevThree.follow(elevOne);
-    elevFour.follow(elevOne);
+    elevTwo.follow(elevFour);
+    elevThree.follow(elevFour);
+    elevOne.follow(elevFour);
 
-    elevMaster = elevOne;
+    elevMaster = elevFour;
+
+    elevMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
   
     elevOne.setNeutralMode(NeutralMode.Brake);
     elevOne.set(ControlMode.PercentOutput, 0);
@@ -68,12 +70,16 @@ public class Elevator extends Subsystem {
     }
   }
 
-  public boolean getTop() {
-    return top.get();
+  public double getPosition() {
+    return elevMaster.getSelectedSensorPosition();
   }
 
   public boolean getBottom() {
     return bottom.get();
+  }
+
+  public void testElev(double speed) {
+    elevFour.set(speed);
   }
 
   public void setElevMotors(double speed) {
@@ -85,7 +91,7 @@ public class Elevator extends Subsystem {
   }
 
   public void lowerDown() {
-    elevMaster.set(-0.2);
+    elevMaster.set(-0.5);
   }
 
   public void stop() {

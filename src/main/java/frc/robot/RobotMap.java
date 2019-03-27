@@ -14,8 +14,8 @@ public class RobotMap {
 
     public static final int PCM_ID = 20;
 	//Drivetrain
-	public static final int LEFT_TALON_BACK = 14; 
-	public static final int LEFT_TALON_FRONT = 15; 
+	public static final int LEFT_TALON_BACK = 14; //11
+	public static final int LEFT_TALON_FRONT = 2; 
 	public static final int RIGHT_TALON_BACK = 1; 
 	public static final int RIGHT_TALON_FRONT = 3;
 	//competition bot
@@ -36,29 +36,29 @@ public class RobotMap {
 	//Elevator
 	public static final int ELEVATOR_ONE = 12;
 	public static final int ELEVATOR_TWO = 13;
-	public static final int ELEVATOR_THREE = 11; 
-	public static final int ELEVATOR_FOUR = 4;
+	public static final int ELEVATOR_THREE = 11; //14
+	public static final int ELEVATOR_FOUR = 15;
 
-	public static final boolean ELEVATOR_ONE_DIRECTION = false;
+	public static final boolean ELEVATOR_ONE_DIRECTION = true;
 	public static final boolean ELEVATOR_TWO_DIRECTION = true;
 	public static final boolean ELEVATOR_THREE_DIRECTION = false;
-	public static final boolean ELEVATOR_FOUR_DIRECTION = true;
+	public static final boolean ELEVATOR_FOUR_DIRECTION = false;
 
-	public static final int ELEV_TOP = 0;
 	public static final int ELEV_BOT = 1;
 
-	public static final int ELEV_SWITCH_1 = 1;
-	public static final int ELEV_SWITCH_2 = 0;
+	public static final int ELEV_SWITCH_1 = 6;
+	public static final int ELEV_SWITCH_2 = 7;
 
-	public static final int EXTENDY_1 = 4;
-	public static final int EXTENDY_2 = 5;
+	public static final int EXTENDY_1 = 0;
+	public static final int EXTENDY_2 = 1;
 
-	public static final int STRETCHY_1 = 7;
-	public static final int STRETCHY_2 = 6;
+	public static final int STRETCHY_1 = 2;
+	public static final int STRETCHY_2 = 3;
 
 	//Intake
 	public static final int INTAKE = 2;
 	public static final int INTAKE_ROTATE = 0;
+	public static final int INTAKE_HOLDER = 9;
 
 	//Climber
 	public static final int CLIMB_PISTON_1 = 2;
