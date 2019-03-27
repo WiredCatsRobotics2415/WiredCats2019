@@ -94,6 +94,10 @@ public class Elevator extends Subsystem {
     elevMaster.set(-0.5);
   }
 
+  public void endgameLower() {
+    elevMaster.set(-0.8);
+  }
+
   public void stop() {
     elevMaster.set(0);
   }
@@ -112,6 +116,10 @@ public class Elevator extends Subsystem {
 
   public void shiftDown() {
     shifter.set(Value.kForward);
+  }
+
+  public boolean getEndgameShift() {
+    return shifter.get() == Value.kForward;
   }
 
   @Override

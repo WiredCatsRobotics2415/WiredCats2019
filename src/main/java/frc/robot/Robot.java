@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
 
   public static Limelight limelight;
 
-  private boolean limelightOn;
+  private boolean limelightOn = false, endgameOn = false;
 
   public enum AutoChoice {
     leftFrontCargo("Left Front Cargo"), rightFrontCargo("Right Front Cargo"), passLine("Pass Line"), cameraControl("Camera Control");
@@ -170,6 +170,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    endgameOn = false;
+
     autoSelelected = autoChooser.getSelected();
     startLocationSelected = startLocation.getSelected();
     System.out.println("Auto selected: " + autoSelelected.toString());
@@ -225,6 +227,7 @@ public class Robot extends TimedRobot {
     // endgame.flipIn();
     // endgame.stop();
     drivetrain.setBrakeMode(true);
+    endgameOn = false;
     // hatchManip.stretch();
     
     // drivetrain.enableSafeties();
@@ -238,11 +241,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     controllerDrivetrain();
+    // controllerHatchMan();
+    // controllerIntake();
+    // controllerIntakeRotator();
+    // controllerEndgame();
     controllerElevator();
-    controllerHatchMan();
-    controllerIntake();
-    controllerIntakeRotator();
-    controllerEndgame();
   }
 
   private void controllerDrivetrain() {
@@ -254,10 +257,58 @@ public class Robot extends TimedRobot {
     drivetrain.drive(throttle, turn);
   }
 
+  private void controllerLimelightDrive() {
+    double throttle, turn;
+    throttle = Math.abs(oi.getDriveThrottle()) > drivetrain.DEADBAND ? oi.getDriveThrottle() : 0;
+    turn = Math.abs(oi.getDriveTurn()) > drivetrain.DEADBAND ? oi.getDriveTurn() : 0;
+
+    double left, right;
+
+    left = throttle - turn;
+    right = throttle + turn;
+
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTableEntry tx = table.getEntry("tx");
+    NetworkTableEntry ty = table.getEntry("ty");
+    NetworkTableEntry ta = table.getEntry("ta");
+
+    double x = tx.getDouble(0.00);
+    double y = ty.getDouble(0.00);
+    double area = ta.getDouble(0.00);
+
+    if (limelight.isTarget()) {
+      System.out.println("HEADING ERROR: " + x);
+
+      double heading_error = x;
+      double distance_error = area - limelight.TARGET_AREA;
+      // System.out.println("HEADING ERROR: " + heading_error);
+      double steering_adjust = 0.0;
+      double distance_adjust = 0.0;
+
+      if (x > 1.0) {
+        steering_adjust = limelight.kP_TURN * heading_error; //+ limelight.min_command;
+      } else if (x < 1.0) {
+        steering_adjust = limelight.kP_TURN * heading_error; // - limelight.min_command;
+      }
+
+      // distance_adjust = distance_error * 0.05;
+
+      left += steering_adjust + distance_adjust;
+      right -= steering_adjust - distance_adjust;
+
+      System.out.println("STEERING ADJUST: " + steering_adjust);
+
+      // System.out.println("DISTANCE: " + distance_error);
+
+    }
+
+    drivetrain.setMotorsInd(left, right);
+  }
+
   private void controllerIntake() {
-    if (gamepad.getBumper(Hand.kLeft)) {
+    if (oi.getIntaking()) {
       intake.intake();
-    } else if (gamepad.getBumper(Hand.kRight)) {
+    } else if (oi.getOutaking()) {
       intake.outtake();
     } else {
       intake.still();
@@ -265,28 +316,23 @@ public class Robot extends TimedRobot {
   }
 
   private void controllerIntakeRotator() {
-    double leftTrigger, rightTrigger, rotate;
-    leftTrigger = gamepad.getRawAxis(3);
-    if (leftTrigger < 0) leftTrigger = 0;
-
-    rightTrigger = gamepad.getRawAxis(4);
-    if (rightTrigger < 0) rightTrigger = 0;
-
-    if (leftTrigger > 0) {
-      intakeRotator.setMotor(-1*leftTrigger);
-    } else if (rightTrigger > 0) {
-      intakeRotator.setMotor(rightTrigger);
+    if (oi.getIntakeRotatorUp()) {
+      intakeRotator.rotateUp();
+    } else if (oi.getIntakeRotatorDown()) {
+      intakeRotator.rotateDown();
     } else {
-      rotate = operator.getRawAxis(5);
-      if (Math.abs(rotate) < 0.15 ) rotate = 0;
-      intakeRotator.setMotor(rotate);
+      intakeRotator.stop();
     }
   }
 
   private void controllerElevator() {
-    if (gamepad.getPOV() == 90) {
-      elevator.lowerDown();
-    } else if (gamepad.getPOV() == 270) {
+    if (oi.getElevatorDown()) {
+      if(elevator.getEndgameShift()) {
+        elevator.endgameLower();
+      } else {
+        elevator.lowerDown();
+      }
+    } else if (oi.getElevatorUp()) {
       elevator.liftUp();
     } else {
       elevator.stop();
@@ -294,18 +340,22 @@ public class Robot extends TimedRobot {
   }
 
   private void controllerEndgame() {
-    if (gamepad.getRawButton(14)) {
+    if (oi.getEndgameFlipOut()) {
       endgame.flipOut();
-    } else if (gamepad.getRawButton(13)) { //PS button home button
+      elevator.shiftDown();
+      endgameOn = true;
+    } else if (oi.getEndgameFlipIn()) { //PS button home button
       endgame.flipIn();
+      elevator.shiftUp();
+      endgameOn = false;
     }
   }
 
   private void controllerHatchMan() {
-    if (gamepad.getBumperPressed(Hand.kRight)) { //left joystick
+    if (oi.getHatchExtendToggle()) { //left joystick
       hatchManip.extendToggle();
     }
-    if (gamepad.getBumperPressed(Hand.kLeft)) { // right joystick
+    if (oi.getHatchStretchToggle()) { // right joystick
       hatchManip.stretchToggle();
     }
   }
@@ -324,7 +374,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    double leftY = gamepad.getRawAxis(1);
+    double leftY = oi.getDriveThrottle();
     // drivetrain.setMotors(leftY, leftY);
     // endgame.testMotor(leftY);
     System.out.println(leftY);

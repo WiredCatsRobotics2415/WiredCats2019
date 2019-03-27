@@ -4,22 +4,17 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class OI {
-    private static final long bufferTimeMs = 50;
     private XboxController gamepad;
-    private long hatchExtendBufferStartTimeMs;
-    private long hatchStretchBufferStartTimeMs;
 
     public OI(XboxController gamepad) {
         this.gamepad = gamepad;
-        this.hatchExtendBufferStartTimeMs = 0;
-        this.hatchStretchBufferStartTimeMs = 0;
     }
     //Drivetrain
     public double getDriveThrottle() {
         return gamepad.getRawAxis(1);
     }
     public double getDriveTurn() {
-        return gamepad.getRawAxis(0);
+        return gamepad.getRawAxis(2);
     }
 
     //Elevator
@@ -32,24 +27,10 @@ public class OI {
 
     //Hatch Maniupulator
     public boolean getHatchExtendToggle() {
-        if(gamepad.getBumperPressed(Hand.kRight)) {
-            if(System.currentTimeMillis() > hatchExtendBufferStartTimeMs+bufferTimeMs) {
-                hatchExtendBufferStartTimeMs = System.currentTimeMillis();
-                return true;
-            }
-            return false;
-        }
-        return false;
+        return gamepad.getRawButtonPressed(11);   
     }
     public boolean getHatchStretchToggle() {
-        if(gamepad.getBumperPressed(Hand.kLeft)) {
-            if(System.currentTimeMillis() > hatchStretchBufferStartTimeMs+bufferTimeMs) {
-                hatchStretchBufferStartTimeMs = System.currentTimeMillis();
-                return true;
-            }
-            return false;
-        }
-        return false;
+        return gamepad.getRawButtonPressed(12);
     }
 
     //Intake
@@ -62,17 +43,17 @@ public class OI {
 
     //Intake Rotator
     public boolean getIntakeRotatorUp() {
-        return false; //TODO
+        return gamepad.getRawButton(7);
     }
     public boolean getIntakeRotatorDown() {
-        return false; //TODO
+        return gamepad.getRawButton(8);
     }
 
     //Endgame
     public boolean getEndgameFlipOut() {
-        return false; //TODO
+        return gamepad.getRawButton(14);
     }
     public boolean getEndgameFlipIn() {
-        return false; //TODO
+        return gamepad.getRawButton(13);
     }
 }
