@@ -35,7 +35,6 @@ public class IntakeRotator extends Subsystem {
     rotator.setNeutralMode(NeutralMode.Brake);
 
     // holder = new Solenoid(RobotMap.PCM_ID, RobotMap.INTAKE_HOLDER);
-
   }
 
   // public void holdIn() {

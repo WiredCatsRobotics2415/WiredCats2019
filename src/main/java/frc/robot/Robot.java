@@ -242,6 +242,7 @@ public class Robot extends TimedRobot {
     controllerElevator();
     controllerHatchMan();
     controllerIntake();
+    controllerIntakeRotator();
     controllerEndgame();
   }
 
@@ -255,6 +256,16 @@ public class Robot extends TimedRobot {
   }
 
   private void controllerIntake() {
+    if (gamepad.getBumper(Hand.kLeft)) {
+      intake.intake();
+    } else if (gamepad.getBumper(Hand.kRight)) {
+      intake.outtake();
+    } else {
+      intake.still();
+    }
+  }
+
+  private void controllerIntakeRotator() {
     double leftTrigger, rightTrigger, rotate;
     leftTrigger = gamepad.getRawAxis(3);
     if (leftTrigger < 0) leftTrigger = 0;
