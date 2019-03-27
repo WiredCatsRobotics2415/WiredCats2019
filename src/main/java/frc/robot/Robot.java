@@ -242,10 +242,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     controllerDrivetrain();
-    controllerHatchMan();
-    controllerIntake();
-    controllerIntakeRotator();
-    controllerEndgame();
+    // controllerHatchMan();
+    // controllerIntake();
+    // controllerIntakeRotator();
+    // controllerEndgame();
     if (endgameOn) {
       controllerEndgameElevator();
     } else {
