@@ -248,11 +248,57 @@ public class Robot extends TimedRobot {
 
   private void controllerDrivetrain() {
     double leftY, rightX;
-    leftY = gamepad.getRawAxis(1);
-    rightX = -gamepad.getRawAxis(4);
+    leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
+    rightX = Math.abs(-gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? -gamepad.getRawAxis(2) : 0;
 
     //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
     drivetrain.drive(leftY, rightX);
+  }
+
+  private void controllerLimelightDrive() {
+    double leftY, rightX;
+    leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
+    rightX = Math.abs(-gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? -gamepad.getRawAxis(2) : 0;
+
+    double left, right;
+
+    left = leftY - rightX;
+    right = leftY + rightX;
+
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTableEntry tx = table.getEntry("tx");
+    NetworkTableEntry ty = table.getEntry("ty");
+    NetworkTableEntry ta = table.getEntry("ta");
+
+    double x = tx.getDouble(0.00);
+    double y = ty.getDouble(0.00);
+    double area = ta.getDouble(0.00);
+
+    if (limelight.isTarget()) {
+      double heading_error = x;
+      double distance_error = area - limelight.TARGET_AREA;
+      // System.out.println("HEADING ERROR: " + heading_error);
+      double steering_adjust = 0.0;
+      double distance_adjust = 0.0;
+
+      if (x > 1.0) {
+        steering_adjust = limelight.kP_TURN * heading_error; //+ limelight.min_command;
+      } else if (x < 1.0) {
+        steering_adjust = limelight.kP_TURN * heading_error; // - limelight.min_command;
+      }
+
+      // distance_adjust = distance_error * 0.05;
+
+      left += steering_adjust + distance_adjust;
+      right -= steering_adjust - distance_adjust;
+
+      System.out.println("STEERING ADJUST: " + steering_adjust);
+
+      System.out.println("DISTANCE: " + distance_error);
+
+    }
+
+    drivetrain.setMotors(left, right);
   }
 
   private void controllerIntake() {
