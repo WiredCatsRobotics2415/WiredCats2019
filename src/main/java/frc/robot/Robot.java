@@ -243,11 +243,11 @@ public class Robot extends TimedRobot {
 
     elevator.setElevMotors(elevatorspeed);
 
-    // if (gamepad.getRawButton(2)) { //x
-    //   elevator.shiftDown();
-    // } else if (gamepad.getRawButton(1)) { //square
-    //   elevator.shiftUp();
-    // }
+    if (gamepad.getRawButton(2)) { //x
+      elevator.shiftDown();
+    } else if (gamepad.getRawButton(1)) { //square
+      elevator.shiftUp();
+    }
 
     // if (gamepad.getRawButtonPressed(14)) { //touchpad
     //   endgame.flipOut();
@@ -282,7 +282,7 @@ public class Robot extends TimedRobot {
     // System.out.println(drivetrain.getYaw());
     // System.out.println(gamepad.getPOV());
     // System.out.println(gamepad);
-    // System.out.println(elevator.getTop());
+    // System.out.println(elevator.getTop());t
     // System.out.println(gamepad.get)
   }
 }
