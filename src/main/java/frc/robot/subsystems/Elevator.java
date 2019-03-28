@@ -79,7 +79,7 @@ public class Elevator extends Subsystem {
   }
 
   public void testElev(double speed) {
-    elevFour.set(speed);
+    elevOne.set(speed);
   }
 
   public void setElevMotors(double speed) {

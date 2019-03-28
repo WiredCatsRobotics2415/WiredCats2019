@@ -119,8 +119,8 @@ public class Robot extends TimedRobot {
       if(StartLocation.values()[i] == defaultStart) continue;
       startLocation.addOption(StartLocation.values()[i].toString(), StartLocation.values()[i]);
     }
-    autoSelector.add(autoChooser);
-    autoSelector.add(startLocation);
+    // autoSelector.add(autoChooser);
+    // autoSelector.add(startLocation);
     autoSelelected = defaultAuto;
     startLocationSelected = defaultStart;
 
@@ -242,15 +242,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     controllerDrivetrain();
-    // controllerHatchMan();
-    // controllerIntake();
-    // controllerIntakeRotator();
+    controllerHatchMan();
+    controllerIntake();
+    controllerIntakeRotator();
     // controllerEndgame();
-    if (endgameOn) {
-      controllerEndgameElevator();
-    } else {
-      controllerElevator();
-    }
+    controllerElevator();
   }
 
   private void controllerDrivetrain() {
@@ -321,28 +317,21 @@ public class Robot extends TimedRobot {
   }
 
   private void controllerIntakeRotator() {
-    double leftTrigger, rightTrigger, rotate;
-    leftTrigger = gamepad.getRawAxis(3);
-    if (leftTrigger < 0) leftTrigger = 0;
-
-    rightTrigger = gamepad.getRawAxis(4);
-    if (rightTrigger < 0) rightTrigger = 0;
-
-    if (leftTrigger > 0) {
-      intakeRotator.setMotor(-1*leftTrigger);
-    } else if (rightTrigger > 0) {
-      intakeRotator.setMotor(rightTrigger);
+    double rotate = 0;
+    if (gamepad.getRawButton(7)) {
+      rotate = 0.7;
+    } else if (gamepad.getRawButton(8)) {
+      rotate = -0.7;
     } else {
-      rotate = operator.getRawAxis(5);
-      if (Math.abs(rotate) < 0.15 ) rotate = 0;
-      intakeRotator.setMotor(rotate);
+      rotate = 0;
     }
+    intakeRotator.setMotor(rotate);
   }
 
   private void controllerElevator() {
-    if (gamepad.getPOV() == 90) {
+    if (gamepad.getPOV() == 270) {
       elevator.lowerDown();
-    } else if (gamepad.getPOV() == 270) {
+    } else if (gamepad.getPOV() == 90) {
       elevator.liftUp();
     } else {
       elevator.stop();
@@ -395,10 +384,11 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     double leftY = gamepad.getRawAxis(1);
+    elevator.testElev(leftY);
     // drivetrain.setMotors(leftY, leftY);
     // endgame.testMotor(leftY);
-    System.out.println(leftY);
-    drivetrain.testMotor(leftY);
+    // System.out.println(leftY);
+    // drivetrain.testMotor(leftY);
   }
 
   @Override

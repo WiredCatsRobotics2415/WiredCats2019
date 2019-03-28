@@ -35,11 +35,11 @@ public class Intake extends Subsystem {
   }
 
   public void intake(){
-    roller.set(1);
+    roller.set(0.75);
   }
 
   public void outtake() {
-    roller.set(-1);
+    roller.set(-0.75);
   }
 
   public void still() {
