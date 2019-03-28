@@ -187,12 +187,12 @@ public class Robot extends TimedRobot {
     leftY = Math.abs(gamepad.getRawAxis(1)) > drivetrain.DEADBAND ? gamepad.getRawAxis(1) : 0;
     rightX = Math.abs(-gamepad.getRawAxis(2)) > drivetrain.DEADBAND ? -gamepad.getRawAxis(2) : 0;
 
-    boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
+    // boolean isQuickTurn = Math.abs(leftY) < 0.1 && Math.abs(rightX) >= .1;
 
-    if (gamepad.getRawButtonPressed(3)) {
-      System.out.println("LEFT: " + leftY);
-      drivetrain.printCurrent();
-    }
+    // if (gamepad.getRawButtonPressed(3)) {
+    //   System.out.println("LEFT: " + leftY);
+    //   drivetrain.printCurrent();
+    // }
 
     // drivetrain.drive(0.9*leftY, -0.9*rightX);
     drivetrain.babyDrive(-0.9*leftY, 0.9*rightX);
@@ -213,22 +213,17 @@ public class Robot extends TimedRobot {
     //     intake.still();
     // }
 
-    // double leftTrigger, rightTrigger;
+    double rotateSpeed = 0;
 
-    // leftTrigger = gamepad.getRawAxis(3);
-    // if (leftTrigger < 0) leftTrigger = 0;
+    if (gamepad.getRawButton(7)) { //upwards
+      rotateSpeed = 0.65;
+    } else if (gamepad.getRawButton(8)) { //downwards
+      rotateSpeed = -0.65;
+    } else {
+      rotateSpeed = 0;
+    }
 
-    // rightTrigger = gamepad.getRawAxis(4);
-    // if (rightTrigger < 0) rightTrigger = 0;
-
-    // if (gamepad.getRawButton(7)) {
-    //   intakeRotator.setMotor(-1);
-    // } else if (gamepad.getRawButton(8)) {
-    //   intakeRotator.setMotor(1);
-    // } else {
-      
-    // }
-
+    intakeRotator.setMotor(rotateSpeed);
 
     double elevatorspeed = 0;
     // System.out.println(leftY);
