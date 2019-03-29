@@ -87,11 +87,11 @@ public class Elevator extends Subsystem {
   }
 
   public void liftUp() {
-    elevMaster.set(0.5);
+    elevMaster.set(0.75);
   }
 
   public void lowerDown() {
-    elevMaster.set(-0.5);
+    elevMaster.set(-0.75);
   }
 
   public void endgameLower() {

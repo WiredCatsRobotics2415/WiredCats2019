@@ -134,13 +134,13 @@ public class Robot extends TimedRobot {
     intake = new Intake();
     intakeRotator = new IntakeRotator();
     elevator = new Elevator();
-    endgame = new Endgame();
+    // endgame = new Endgame();
     hatchManip = new HatchManipulator();
 
     // limelight = new Limelight();
     // compressor.start();
     compressor.setClosedLoopControl(true);
-    compressor.stop();
+    // compressor.stop();
 
     limelightOn = false;
 
@@ -229,7 +229,8 @@ public class Robot extends TimedRobot {
     // endgame.stop();
     drivetrain.setBrakeMode(true);
     endgameOn = false;
-    // hatchManip.stretch();
+    hatchManip.shrink();
+    hatchManip.retract();
     
     // drivetrain.enableSafeties();
     // compressor.start();
@@ -247,6 +248,9 @@ public class Robot extends TimedRobot {
     controllerIntakeRotator();
     // controllerEndgame();
     controllerElevator();
+    // System.out.println("STR: " + hatchManip.isStretched());
+    // System.out.println("EXT: " + hatchManip.isOut());
+
   }
 
   private void controllerDrivetrain() {
@@ -318,10 +322,10 @@ public class Robot extends TimedRobot {
 
   private void controllerIntakeRotator() {
     double rotate = 0;
-    if (gamepad.getRawButton(7)) {
-      rotate = 0.7;
-    } else if (gamepad.getRawButton(8)) {
+    if (gamepad.getRawButton(7)) { //DOWN, LEFT
       rotate = -0.7;
+    } else if (gamepad.getRawButton(8)) { //UP, RIGHT
+      rotate = 0.7;
     } else {
       rotate = 0;
     }
@@ -336,6 +340,13 @@ public class Robot extends TimedRobot {
     } else {
       elevator.stop();
     }
+
+    if (gamepad.getRawButtonPressed(1)) {
+      elevator.shiftUp();
+    } else if (gamepad.getRawButtonPressed(2)) {
+      elevator.shiftDown();
+    }
+
   }
 
   private void controllerEndgameElevator() {
@@ -361,10 +372,10 @@ public class Robot extends TimedRobot {
   }
 
   private void controllerHatchMan() {
-    if (gamepad.getRawButtonPressed(11)) { //left joystick
+    if (gamepad.getRawButtonPressed(11) && !hatchManip.isStretched()) { //left joystick 
       hatchManip.extendToggle();
     }
-    if (gamepad.getRawButtonPressed(12)) { // right joystick
+    if (gamepad.getRawButtonPressed(12) && hatchManip.isOut()) { // right joystick && hatchManip.isOut()
       hatchManip.stretchToggle();
     }
   }
@@ -384,11 +395,11 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     double leftY = gamepad.getRawAxis(1);
-    elevator.testElev(leftY);
+    // elevator.testElev(leftY);
     // drivetrain.setMotors(leftY, leftY);
     // endgame.testMotor(leftY);
     // System.out.println(leftY);
-    // drivetrain.testMotor(leftY);
+    drivetrain.testMotor(leftY);
   }
 
   @Override

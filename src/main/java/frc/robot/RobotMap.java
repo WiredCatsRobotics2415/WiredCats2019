@@ -22,7 +22,7 @@ public class RobotMap {
 	public static final boolean LEFT_TALON_BACK_DIRECTION = false; //true
 	public static final boolean LEFT_TALON_FRONT_DIRECTION = true;
 	public static final boolean RIGHT_TALON_BACK_DIRECTION = false;
-	public static final boolean RIGHT_TALON_FRONT_DIRECTION = false;
+	public static final boolean RIGHT_TALON_FRONT_DIRECTION = true; //false
 
 	public static final boolean PIGEON_ON_CAN = false;
 	public static final int PIGEON_ID = 3; //need to fix (-1 for null)
@@ -46,21 +46,21 @@ public class RobotMap {
 
 	public static final int ELEV_BOT = 1;
 
-	public static final int ELEV_SWITCH_1 = 6;
-	public static final int ELEV_SWITCH_2 = 7;
+	public static final int ELEV_SWITCH_1 = 4;
+	public static final int ELEV_SWITCH_2 = 5;
 
 	public static final int EXTENDY_1 = 0;
 	public static final int EXTENDY_2 = 1;
 
-	public static final int STRETCHY_1 = 2;
-	public static final int STRETCHY_2 = 3;
+	public static final int STRETCHY_1 = 6;
+	public static final int STRETCHY_2 = 7;
 
 	//Intake
 	public static final int INTAKE = 5;
 	public static final int INTAKE_ROTATE = 0;
-	public static final int INTAKE_HOLDER = 9;
+	public static final int INTAKE_HOLDER = 2;
 
 	//Climber
-	public static final int CLIMB_PISTON_1 = 4;
-	public static final int CLIMB_PISTON_2 = 5;
+	public static final int CLIMB_PISTON_1 = 8;
+	public static final int CLIMB_PISTON_2 = 9;
 }
