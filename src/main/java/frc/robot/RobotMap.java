@@ -14,6 +14,9 @@ public class RobotMap {
 
 	public static final int PCM_ID = 20;
 
+	public static final int INTAKE_PCM_ID = 21;
+
+	//Drivetrain
     public static final int LEFT_TALON_BACK = 11; //14
 	public static final int LEFT_TALON_FRONT = 2; 
 	public static final int RIGHT_TALON_BACK = 1; 
@@ -46,21 +49,22 @@ public class RobotMap {
 
 	public static final int ELEV_BOT = 1;
 
-	public static final int ELEV_SWITCH_1 = 4;
-	public static final int ELEV_SWITCH_2 = 5;
+	public static final int ELEV_SWITCH_1 = 1;
+	public static final int ELEV_SWITCH_2 = 3;
 
 	public static final int EXTENDY_1 = 0;
-	public static final int EXTENDY_2 = 1;
+	public static final int EXTENDY_2 = 2;
 
-	public static final int STRETCHY_1 = 6;
-	public static final int STRETCHY_2 = 7;
+	public static final int STRETCHY_1 = 4;
+	public static final int STRETCHY_2 = 6;
 
 	//Intake
 	public static final int INTAKE = 5;
 	public static final int INTAKE_ROTATE = 0;
-	public static final int INTAKE_HOLDER = 2;
+	public static final int INTAKE_HOLDER_1 = 4;
+	public static final int INTAKE_HOLDER_2 = 5;
 
 	//Climber
-	public static final int CLIMB_PISTON_1 = 8;
-	public static final int CLIMB_PISTON_2 = 9;
+	public static final int CLIMB_PISTON_1 = 5;
+	public static final int CLIMB_PISTON_2 = 7;
 }
