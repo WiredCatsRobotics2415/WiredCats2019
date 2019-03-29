@@ -46,11 +46,11 @@ public class IntakeRotator extends Subsystem {
   // }
 
   public void rotateUp() {
-    rotator.set(-1);
+    rotator.set(0.7);
   }
 
   public void rotateDown() {
-    rotator.set(0.5);
+    rotator.set(-0.7);
   }
 
   public void stop() {

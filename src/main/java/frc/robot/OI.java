@@ -11,18 +11,18 @@ public class OI {
     }
     //Drivetrain
     public double getDriveThrottle() {
-        return gamepad.getRawAxis(1);
+        return Math.abs(gamepad.getRawAxis(1)) > 0.05 ? gamepad.getRawAxis(1) : 0;
     }
     public double getDriveTurn() {
-        return gamepad.getRawAxis(2);
+        return Math.abs(-gamepad.getRawAxis(2)) > 0.05 ? -gamepad.getRawAxis(2) : 0;
     }
 
     //Elevator
     public boolean getElevatorUp() {
-        return gamepad.getPOV() == 270;
+        return gamepad.getPOV() == 90;
     }
     public boolean getElevatorDown() {
-        return gamepad.getPOV() == 90;
+        return gamepad.getPOV() == 270;
     }
 
     //Hatch Maniupulator
@@ -35,18 +35,18 @@ public class OI {
 
     //Intake
     public boolean getIntaking() {
-        return false; //TODO
+        return gamepad.getBumper(Hand.kLeft);
     }
     public boolean getOutaking() {
-        return false; //TODO
+        return gamepad.getBumper(Hand.kRight);
     }
 
     //Intake Rotator
     public boolean getIntakeRotatorUp() {
-        return gamepad.getRawButton(7);
+        return gamepad.getRawButton(8);
     }
     public boolean getIntakeRotatorDown() {
-        return gamepad.getRawButton(8);
+        return gamepad.getRawButton(7);
     }
 
     //Endgame
@@ -55,5 +55,9 @@ public class OI {
     }
     public boolean getEndgameFlipIn() {
         return gamepad.getRawButton(13);
+    }
+
+    public boolean getButtonPressed(int button) {
+        return gamepad.getRawButtonPressed(button);
     }
 }

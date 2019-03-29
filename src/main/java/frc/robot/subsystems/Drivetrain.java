@@ -65,8 +65,8 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     rFront.setInverted(RobotMap.RIGHT_TALON_FRONT_DIRECTION);
     rBack.setInverted(RobotMap.RIGHT_TALON_BACK_DIRECTION);
 
-    // lFront.follow(lBack);
-    // rFront.follow(rBack);
+    lFront.follow(lBack);
+    rFront.follow(rBack);
     lMaster = lBack;
     rMaster = rBack;
 
@@ -76,6 +76,9 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     lMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
     rMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
     rMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+
+    lMaster.configOpenloopRamp(0.1);
+    rMaster.configOpenloopRamp(0.1);
 
     lMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
     rMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);

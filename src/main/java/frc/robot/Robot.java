@@ -139,7 +139,7 @@ public class Robot extends TimedRobot {
     // limelight = new Limelight();
     // compressor.start();
     compressor.setClosedLoopControl(true);
-    compressor.stop();
+    // compressor.stop();
 
     limelightOn = false;
 
@@ -241,9 +241,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     controllerDrivetrain();
-    // controllerHatchMan();
-    // controllerIntake();
-    // controllerIntakeRotator();
+    controllerHatchMan();
+    controllerIntake();
+    controllerIntakeRotator();
     // controllerEndgame();
     controllerElevator();
   }
@@ -337,6 +337,12 @@ public class Robot extends TimedRobot {
     } else {
       elevator.stop();
     }
+
+    if (oi.getButtonPressed(1)) {
+      elevator.shiftUp();
+    } else if (oi.getButtonPressed(2)) {
+      elevator.shiftDown();
+    }
   }
 
   private void controllerEndgame() {
@@ -352,10 +358,10 @@ public class Robot extends TimedRobot {
   }
 
   private void controllerHatchMan() {
-    if (oi.getHatchExtendToggle()) { //left joystick
+    if (oi.getHatchExtendToggle() && !hatchManip.isStretched()) {//left joystick
       hatchManip.extendToggle();
     }
-    if (oi.getHatchStretchToggle()) { // right joystick
+    if (oi.getHatchStretchToggle() && hatchManip.isOut()) { // right joystick
       hatchManip.stretchToggle();
     }
   }
