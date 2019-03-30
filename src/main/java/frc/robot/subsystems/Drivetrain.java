@@ -47,8 +47,6 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   private PIDController pidController;
   private PIDSourceType pidSourceType;
   private double previousThrottle;
-  
-  public double DEADBAND = 0.05;
 
   public Drivetrain() {
     this(Drivemode.percentOutput);
@@ -77,11 +75,16 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     rMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
     rMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 
-    lMaster.configOpenloopRamp(0.1);
-    rMaster.configOpenloopRamp(0.1);
-
-    lMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
-    rMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
+    if(lMaster.getDeviceID() == RobotMap.LEFT_DRIVETRAIN_ENCODER) {
+      lMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
+    } else {
+      System.out.println("wrong port on Left Encoder");
+    }
+    if(rMaster.getDeviceID() == RobotMap.RIGHT_DRIVETRAIN_ENCODER) {
+      rMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
+    } else {
+      System.out.println("wrong port on Right Encoder");
+    }
 
     zeroEncoders();
     
@@ -105,15 +108,49 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
       usingPidgey = false;
     }
 
-    zeroYaw();
+    zeroGyro();
 
     if(usingPidgey) {
       if(RobotMap.PIGEON_ON_CAN) {
-        lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
-        rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+        switch(RobotMap.PIGEON_DIRECTION) {
+          case Yaw:
+            lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+            rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+            break;
+          case Pitch:
+            lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Pitch, Constants.PIGEON_REMOTE_INDEX);
+            rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Pitch, Constants.PIGEON_REMOTE_INDEX);
+            break;
+          case Roll:
+            lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Roll, Constants.PIGEON_REMOTE_INDEX);
+            rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Roll, Constants.PIGEON_REMOTE_INDEX);
+            break;
+          default:
+            lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+            rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+            break;
+        }
       } else {
         lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
         rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+        switch(RobotMap.PIGEON_DIRECTION) {
+          case Yaw:
+            lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+            rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+            break;
+          case Pitch:
+            lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Pitch, Constants.PIGEON_REMOTE_INDEX);
+            rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Pitch, Constants.PIGEON_REMOTE_INDEX);
+            break;
+          case Roll:
+            lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Roll, Constants.PIGEON_REMOTE_INDEX);
+            rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Roll, Constants.PIGEON_REMOTE_INDEX);
+            break;
+          default:
+            lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+            rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+            break;
+        }
       }
       if(Constants.PIGEON_REMOTE_INDEX == 0) {
         lMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
@@ -178,9 +215,10 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     boolean isQuickTurn;
     if (Math.abs(throttle) < Math.abs(Constants.DEADBAND)) throttle = 0;
     if (Math.abs(turn) < Math.abs(Constants.DEADBAND)) turn = 0;
-    if(drivemode == Drivemode.percentOutputTurnControl) {
+    if(drivemode == Drivemode.percentOutputTurnControl && !usingPidgey) {
       pidController.setSetpoint(turn);
       previousThrottle = throttle;
+      return;
     }
     setMotors(throttle,turn);
   }
@@ -199,14 +237,21 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     }
   }
 
+  public void setRampOpenLoop(double timeToFull) {
+    lMaster.configOpenloopRamp(timeToFull);
+    rMaster.configOpenloopRamp(timeToFull);
+  }
+
   public void setDrivemode(Drivemode drivemode) {
     this.drivemode = drivemode;
     pidController.disable();
     switch(this.drivemode) {
       case percentOutput:
         pidValues = new PIDValue[0];
+        setRampOpenLoop(Constants.STANDARD_RAMP);
         break;
       case velocity:
+        setRampOpenLoop(Constants.STANDARD_RAMP);
         pidValues = new PIDValue[1];
         pidValues[0] = new PIDValue(Constants.VELOCITY_PID);
         lMaster.config_kP(Constants.VELOCITY_PID_INDEX, Constants.VELOCITY_PID.getKP(), Constants.kTimeoutMs);
@@ -220,6 +265,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
         rMaster.config_kP(Constants.VELOCITY_PID_INDEX, Constants.VELOCITY_PID.getKF(), Constants.kTimeoutMs);
         break;
       case percentOutputTurnControl:
+        setRampOpenLoop(Constants.STANDARD_RAMP);
         pidValues = new PIDValue[1];
         pidValues[0] = new PIDValue(Constants.TURN_PID);
         if(usingPidgey) {
@@ -241,6 +287,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
           pidController.enable();
         }
       default:
+        setRampOpenLoop(Constants.STANDARD_RAMP);
         pidValues = new PIDValue[0];
         break;
     }
@@ -300,7 +347,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
         return output;
       case percentOutputTurnControl:
         output = new double[1];
-        output[0] = getYaw();
+        output[0] = getGryo();
       default:
         output = new double[0];
         return output;
@@ -310,14 +357,14 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   @Override
   public void pidWrite(double output) {
     if(drivemode == Drivemode.percentOutputTurnControl && !usingPidgey) {
-      setMotors(0, output);
+      setMotors(previousThrottle, output);
     }
   }
 
   @Override
   public double pidGet() {
     if(drivemode == Drivemode.percentOutputTurnControl) {
-      return getYaw();
+      return getGryo();
     }
     return 0;
   }
@@ -339,7 +386,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     return velocities;
   }
 
-  public void zeroYaw() {
+  public void zeroGyro() {
     if(ahrs != null) {
       ahrs.zeroYaw();
     }
@@ -348,14 +395,32 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     }
   }
 
-  public double getYaw() {
+  public double getGryo() {
     if(Constants.PIGEON_DEFAULT && pidgey != null) {
       double[] ypr = new double[3];
       pidgey.getYawPitchRoll(ypr);
-      return ypr[0]*Constants.PIGEON_UNITS2DEGREES;
+      switch(RobotMap.PIGEON_DIRECTION) {
+        case Yaw:
+          return ypr[0]*Constants.PIGEON_UNITS2DEGREES;
+        case Pitch:
+          return ypr[1]*Constants.PIGEON_UNITS2DEGREES;
+        case Roll:
+          return ypr[2]*Constants.PIGEON_UNITS2DEGREES;
+        default:
+          return ypr[0]*Constants.PIGEON_UNITS2DEGREES;
+      }
     }
     if(ahrs != null) {
-      return (double)ahrs.getYaw()*Constants.NAVX_UNITS2DEGREES;
+      switch(RobotMap.PIGEON_DIRECTION) {
+        case Yaw:
+          return (double)ahrs.getYaw()*Constants.NAVX_UNITS2DEGREES;
+        case Pitch:
+          return (double)ahrs.getPitch()*Constants.NAVX_UNITS2DEGREES;
+        case Roll:
+          return (double)ahrs.getRoll()*Constants.NAVX_UNITS2DEGREES;
+        default:
+          return (double)ahrs.getYaw()*Constants.NAVX_UNITS2DEGREES;
+      }
     }
     return 0;
   }

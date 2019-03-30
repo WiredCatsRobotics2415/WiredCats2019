@@ -259,8 +259,8 @@ public class Robot extends TimedRobot {
 
   private void controllerLimelightDrive() {
     double throttle, turn;
-    throttle = Math.abs(oi.getDriveThrottle()) > drivetrain.DEADBAND ? oi.getDriveThrottle() : 0;
-    turn = Math.abs(oi.getDriveTurn()) > drivetrain.DEADBAND ? oi.getDriveTurn() : 0;
+    throttle = Math.abs(oi.getDriveThrottle()) > Constants.DEADBAND ? oi.getDriveThrottle() : 0;
+    turn = Math.abs(oi.getDriveTurn()) > Constants.DEADBAND ? oi.getDriveTurn() : 0;
 
     double left, right;
 
@@ -371,6 +371,7 @@ public class Robot extends TimedRobot {
       return robotTalons.get(deviceNumber);
     }
     WPI_TalonSRX newTalon = new WPI_TalonSRX(deviceNumber);
+    newTalon.configFactoryDefault(Constants.kTimeoutMs);
     robotTalons.put(deviceNumber, newTalon);
     return newTalon;
   }

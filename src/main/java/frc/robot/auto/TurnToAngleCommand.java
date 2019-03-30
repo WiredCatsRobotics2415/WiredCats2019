@@ -36,7 +36,7 @@ public class TurnToAngleCommand extends Command {
   @Override
   protected void initialize() {
     maxTime += System.currentTimeMillis();
-    targetAngle += Robot.drivetrain.getYaw();
+    targetAngle += Robot.drivetrain.getGryo();
     if(pidTurn) {
       Robot.drivetrain.setDrivemode(Drivetrain.Drivemode.percentOutputTurnControl);
     } else {
@@ -50,7 +50,7 @@ public class TurnToAngleCommand extends Command {
     if(pidTurn) {
       Robot.drivetrain.drive(0, targetAngle);
     } else {
-      if(Robot.drivetrain.getYaw() < targetAngle) {
+      if(Robot.drivetrain.getGryo() < targetAngle) {
         Robot.drivetrain.drive(0,speed);
       } else {
         Robot.drivetrain.drive(0,-speed);
@@ -61,7 +61,7 @@ public class TurnToAngleCommand extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(Math.abs(Robot.drivetrain.getYaw()-targetAngle) < TOLERANCE) {
+    if(Math.abs(Robot.drivetrain.getGryo()-targetAngle) < TOLERANCE) {
       return true;
     }
     return false;

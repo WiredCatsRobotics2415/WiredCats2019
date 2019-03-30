@@ -26,6 +26,14 @@ public class RobotMap {
 
 	public static final boolean PIGEON_ON_CAN = false;
 	public static final int PIGEON_ID = 3; //need to fix (-1 for null)
+	public static final YawPitchRoll PIGEON_DIRECTION = YawPitchRoll.Yaw;
+	public static final YawPitchRoll NAVX_DIRECTION = YawPitchRoll.Yaw;
+	public static enum YawPitchRoll {
+		Yaw, Pitch, Roll;
+	}
+
+	public static final int LEFT_DRIVETRAIN_ENCODER = 11;
+	public static final int RIGHT_DRIVETRAIN_ENCODER = 1;
 	
 	//practice bot
 	/*public static final boolean LEFT_TALON_BACK_DIRECTION = true;

@@ -34,7 +34,7 @@ public class DriveStraightCommand extends Command {
   @Override
   protected void initialize() {
     maxTime += System.currentTimeMillis();
-    yaw = Robot.drivetrain.getYaw();
+    yaw = Robot.drivetrain.getGryo();
     if(turnPID) {
       Robot.drivetrain.setDrivemode(Drivetrain.Drivemode.percentOutputTurnControl);
     } else {

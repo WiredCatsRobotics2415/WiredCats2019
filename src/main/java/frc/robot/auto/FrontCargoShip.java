@@ -20,25 +20,25 @@ public class FrontCargoShip extends CommandGroup {
     if(left) {
       switch(startPos) {
         case left: //left
-          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break;
         case middle: //middle
-          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break; 
         case right: //right
-          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break;
       }
     } else {
       switch(startPos) {
         case left: //left
-          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break;
         case middle: //middle
-          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break; 
         case right: //right
-          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break;
       }
     }
@@ -70,25 +70,25 @@ public class FrontCargoShip extends CommandGroup {
     if(left) {
       switch(startPos) {
         case left: //left
-          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break;
         case middle: //middle
-          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break; 
         case right: //right
-          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break;
       }
     } else {
       switch(startPos) {
         case left: //left
-          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(sideOffset+targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break;
         case middle: //middle
-          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(-Math.atan2(targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break; 
         case right: //right
-          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false));
+          addSequential(new TurnToAngleCommand(Math.toDegrees(Math.atan2(sideOffset-targetXOffset, distanceToShip-straightOnDistance)), 5000, .4, false, false));
           break;
       }
     }

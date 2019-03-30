@@ -15,6 +15,7 @@ public class Constants {
 	public static final float INTERPOLATION_FACTOR = 0.75f;   //Nathan's Settings
 	public static final float STRAIGHT_LIMITER = 0.95f;
     public static final float TURN_BOOSTER = 1.3f;
+    public static final double STANDARD_RAMP = 0.1;
     
     //PID Drivetrain
     public static final int kTimeoutMs = 30;
