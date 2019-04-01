@@ -24,7 +24,7 @@ public class IntakeRotator extends Subsystem {
   // here. Call these from Commands.
 
   private WPI_TalonSRX rotator;
-  private Solenoid holder;
+  private Solenoid holder1, holder2;
 
   public IntakeRotator() {
     rotator = Robot.getTalon(RobotMap.INTAKE_ROTATE);
@@ -34,16 +34,35 @@ public class IntakeRotator extends Subsystem {
     rotator.set(ControlMode.PercentOutput, 0);
     rotator.setNeutralMode(NeutralMode.Brake);
 
-    // holder = new Solenoid(RobotMap.PCM_ID, RobotMap.INTAKE_HOLDER);
+    holder1 = new Solenoid(RobotMap.INTAKE_PCM_ID, RobotMap.INTAKE_HOLDER_1);
+    holder2 = new Solenoid(RobotMap.INTAKE_PCM_ID, RobotMap.INTAKE_HOLDER_2);
   }
 
-  // public void holdIn() {
-  //   holder.set(true);
-  // }
+  public void holdIn() {
+    holder1.set(false);
+    holder2.set(false);
+  }
 
-  // public void sendOut() {
-  //   holder.set(false);
-  // }
+  public void sendOut() {
+    holder1.set(true);
+    holder2.set(true);
+  }
+
+  public boolean getHold1() {
+    return holder1.get();
+  }
+
+  public boolean getHold2() {
+    return holder2.get();
+  }
+
+  public void toggleHold(){
+    if (holder1.get()) {
+      holdIn();
+    } else {
+      sendOut();
+    }
+  }
 
   public void rotateUp() {
     rotator.set(0.7);

@@ -27,11 +27,15 @@ public class Intake extends Subsystem {
   public Intake() {
     roller = Robot.getTalon(RobotMap.INTAKE);
 
-    roller.setInverted(false);
+    roller.setInverted(true);
 
     roller.set(ControlMode.PercentOutput, 0);
     roller.setNeutralMode(NeutralMode.Brake);
 
+  }
+
+  public void printCurrent() {
+    System.out.println("INTAKE: " + roller.getOutputCurrent()); 
   }
 
   public void intake(){

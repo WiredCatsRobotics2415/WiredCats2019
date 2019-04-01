@@ -82,8 +82,19 @@ public class Elevator extends Subsystem {
     elevFour.set(speed);
   }
 
+  public void printCurrent() {
+    System.out.println("elevOne current="+elevOne.getOutputCurrent());
+    System.out.println("elevTwo current="+elevTwo.getOutputCurrent());
+    System.out.println("elevThree current="+elevThree.getOutputCurrent());
+    System.out.println("elevFour current="+elevFour.getOutputCurrent());
+    System.out.println();
+  }
+
   public void setElevMotors(double speed) {
-    elevMaster.set(speed);
+    elevOne.set(speed);
+    elevTwo.set(speed);
+    elevThree.set(speed);
+    elevFour.set(speed);
   }
 
   public void liftUp() {

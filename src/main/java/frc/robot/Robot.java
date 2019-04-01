@@ -34,6 +34,7 @@ import frc.robot.subsystems.Endgame;
 import frc.robot.subsystems.HatchManipulator;
 
 import frc.util.Limelight;
+import frc.util.Limelight.LightMode;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -118,8 +119,8 @@ public class Robot extends TimedRobot {
       if(StartLocation.values()[i] == defaultStart) continue;
       startLocation.addOption(StartLocation.values()[i].toString(), StartLocation.values()[i]);
     }
-    autoSelector.add(autoChooser);
-    autoSelector.add(startLocation);
+    // autoSelector.add(autoChooser);
+    // autoSelector.add(startLocation);
     autoSelelected = defaultAuto;
     startLocationSelected = defaultStart;
 
@@ -136,11 +137,12 @@ public class Robot extends TimedRobot {
     endgame = new Endgame();
     hatchManip = new HatchManipulator();
 
-    // limelight = new Limelight();
+    limelight = new Limelight();
     // compressor.start();
     compressor.setClosedLoopControl(true);
-    // compressor.stop();
+    compressor.stop();
 
+    limelight.setLedMode(LightMode.eOff);
     limelightOn = false;
 
   }
@@ -170,37 +172,39 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    endgameOn = false;
-
-    autoSelelected = autoChooser.getSelected();
-    startLocationSelected = startLocation.getSelected();
-    System.out.println("Auto selected: " + autoSelelected.toString());
-    System.out.println("Start Position" + startLocationSelected.toString());
-    Command autoCommand = null;
-    switch(autoSelelected) {
-      case leftFrontCargo:
-        autoCommand = new FrontCargoShip(startLocationSelected, true); 
-        break;
-      case rightFrontCargo:
-        autoCommand = new FrontCargoShip(startLocationSelected, false);
-        break;
-      case passLine:
-        autoCommand = new PassLine(startLocationSelected);
-      default:
-        autoCommand = null;
-        break;
-    }
-    if(autoCommand != null) {
-      autoCommand.start();
-    }
+    
+    // autoSelelected = autoChooser.getSelected();
+    // startLocationSelected = startLocation.getSelected();
+    // System.out.println("Auto selected: " + autoSelelected.toString());
+    // System.out.println("Start Position" + startLocationSelected.toString());
+    // Command autoCommand = null;
+    // switch(autoSelelected) {
+    //   case leftFrontCargo:
+    //     autoCommand = new FrontCargoShip(startLocationSelected, true); 
+    //     break;
+    //   case rightFrontCargo:
+    //     autoCommand = new FrontCargoShip(startLocationSelected, false);
+    //     break;
+    //   case passLine:
+    //     autoCommand = new PassLine(startLocationSelected);
+    //   default:
+    //     autoCommand = null;
+    //     break;
+    // }
+    // if(autoCommand != null) {
+    //   autoCommand.start();
+    // }
     // System.out.println("Auto selected: " + m_autoSelected);
     // intakeRotator.setBrakeMode(true);
 
     elevator.setBrakeMode(true);
-    // elevator.shiftUp();
     // endgame.flipIn();
     drivetrain.setBrakeMode(true);
+    endgameOn = false;
+    limelight.setLedMode(LightMode.eOff);
+    elevator.shiftUp();
     // hatchManip.retract();
+    // hatchManip.shrink();
   }
 
   /**
@@ -222,13 +226,15 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // intakeRotator.setBrakeMode(true);
-    // elevator.setBrakeMode(true);
-    // elevator.shiftUp();
-    // endgame.flipIn();
+    elevator.setBrakeMode(true);
+    elevator.shiftUp();
+    // hatchManip.retract();
+    // hatchManip.shrink();
+    endgame.flipIn();
     // endgame.stop();
+    limelight.setLedMode(LightMode.eOff);
     drivetrain.setBrakeMode(true);
     endgameOn = false;
-    // hatchManip.stretch();
     
     // drivetrain.enableSafeties();
     // compressor.start();
@@ -240,12 +246,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    // if (oi.getButton(4)) {
+    //   controllerLimelightDrive();
+    // } else {
+    //   controllerDrivetrain();
+    // }    
     controllerDrivetrain();
-    controllerHatchMan();
-    controllerIntake();
-    controllerIntakeRotator();
-    // controllerEndgame();
+    // controllerHatchMan();
+    // controllerIntake();
+    // controllerIntakeRotator();
+    controllerEndgame();
     controllerElevator();
+
+    if (oi.getButton(1)) {
+      drivetrain.printCurrent();
+      System.out.println();
+    }
+    
   }
 
   private void controllerDrivetrain() {
@@ -253,11 +270,25 @@ public class Robot extends TimedRobot {
     throttle = oi.getDriveThrottle();
     turn = oi.getDriveTurn();
 
-    //drivetrain.drive(cheesyDriveHelper.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+    limelight.setLedMode(LightMode.eOff);
+
     drivetrain.drive(throttle, turn);
+
+    //drivetrain.drive(cheesyDriveHelpl[er.cheesyDrive(leftY, rightX, isQuickTurn, false));  
+    
+    // if (Math.abs(turn) > 0.08) {
+    //   drivetrain.setTargetYaw(-1000);
+    //   drivetrain.drive(throttle, turn);
+    // } else {
+    //   if (drivetrain.getTargetYaw() == -1000) {
+    //     drivetrain.setTargetYaw(drivetrain.getYaw());
+    //   }
+    //   drivetrain.straightDrive(throttle);
+    // }
   }
 
   private void controllerLimelightDrive() {
+    limelight.setLedMode(LightMode.eOn);
     double throttle, turn;
     throttle = Math.abs(oi.getDriveThrottle()) > drivetrain.DEADBAND ? oi.getDriveThrottle() : 0;
     turn = Math.abs(oi.getDriveTurn()) > drivetrain.DEADBAND ? oi.getDriveTurn() : 0;
@@ -277,7 +308,7 @@ public class Robot extends TimedRobot {
     double area = ta.getDouble(0.00);
 
     if (limelight.isTarget()) {
-      System.out.println("HEADING ERROR: " + x);
+      // System.out.println("HEADING ERROR: " + x);
 
       double heading_error = x;
       double distance_error = area - limelight.TARGET_AREA;
@@ -296,7 +327,7 @@ public class Robot extends TimedRobot {
       left += steering_adjust + distance_adjust;
       right -= steering_adjust - distance_adjust;
 
-      System.out.println("STEERING ADJUST: " + steering_adjust);
+      // System.out.println("STEERING ADJUST: " + steering_adjust);
 
       // System.out.println("DISTANCE: " + distance_error);
 
@@ -323,6 +354,10 @@ public class Robot extends TimedRobot {
     } else {
       intakeRotator.stop();
     }
+
+    if (oi.getButtonPressed(3)) {
+      intakeRotator.toggleHold();
+    }
   }
 
   private void controllerElevator() {
@@ -338,30 +373,32 @@ public class Robot extends TimedRobot {
       elevator.stop();
     }
 
-    if (oi.getButtonPressed(1)) {
+    if (oi.getButtonPressed(1)) { //square
       elevator.shiftUp();
-    } else if (oi.getButtonPressed(2)) {
+      endgameOn = false;
+    } else if (oi.getButtonPressed(2)) { //x
       elevator.shiftDown();
+      endgameOn = true;
     }
   }
 
   private void controllerEndgame() {
-    if (oi.getEndgameFlipOut()) {
+    if (oi.getEndgameFlipOut()) { //touchpad
       endgame.flipOut();
       elevator.shiftDown();
       endgameOn = true;
     } else if (oi.getEndgameFlipIn()) { //PS button home button
       endgame.flipIn();
-      elevator.shiftUp();
+      elevator.shiftUp();      
       endgameOn = false;
     }
   }
 
   private void controllerHatchMan() {
-    if (oi.getHatchExtendToggle() && !hatchManip.isStretched()) {//left joystick
+    if (oi.getHatchExtendToggle() && !hatchManip.isStretched()) {//left joystick 
       hatchManip.extendToggle();
     }
-    if (oi.getHatchStretchToggle() && hatchManip.isOut()) { // right joystick
+    if (oi.getHatchStretchToggle() && hatchManip.isOut()) { // right joystick 
       hatchManip.stretchToggle();
     }
   }
@@ -380,15 +417,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    double leftY = oi.getDriveThrottle();
+    double leftY = -oi.getDriveThrottle();
     // drivetrain.setMotors(leftY, leftY);
     // endgame.testMotor(leftY);
     System.out.println(leftY);
-    drivetrain.testMotor(leftY);
+    elevator.testElev(leftY);
   }
 
   @Override
   public void disabledPeriodic() {
+    intakeRotator.holdIn();
+    limelight.setLedMode(LightMode.eOff);
+    // System.out.println("Yaw: " + drivetrain.getYaw());
     // intakeRotator.setBrakeMode(false);
     // elevator.setBrakeMode(false);
     // System.out.println(drivetrain.getYaw());

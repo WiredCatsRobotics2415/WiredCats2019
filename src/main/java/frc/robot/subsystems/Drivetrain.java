@@ -17,8 +17,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.kauailabs.navx.frc.AHRS;
 
-import org.junit.Test.None;
-
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
@@ -46,7 +44,9 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   private boolean usingPidgey;
   private PIDController pidController;
   private PIDSourceType pidSourceType;
-  private double previousThrottle;
+  private double previousThrottle, previousYaw;
+  private long rampingTimeout;
+  private boolean ramping;
   
   public double DEADBAND = 0.05;
 
@@ -77,21 +77,23 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     rMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
     rMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 
-    lMaster.configOpenloopRamp(0.1);
-    rMaster.configOpenloopRamp(0.1);
+    lMaster.configOpenloopRamp(0.1, Constants.kTimeoutMs);
+    rMaster.configOpenloopRamp(0.1, Constants.kTimeoutMs);
+    ramping = true;
+    rampingTimeout = 0;
 
     lMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
     rMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.VELOCITY_PID_INDEX, Constants.kTimeoutMs);
 
     zeroEncoders();
     
-    if(RobotMap.PIGEON_ID >= 0) {
-      if(RobotMap.PIGEON_ON_CAN) {
-        pidgey = new PigeonIMU(RobotMap.PIGEON_ID);
-      } else {
-        pidgey = new PigeonIMU(Robot.getTalon(RobotMap.PIGEON_ID));
-      }
-    }
+    // if(RobotMap.PIGEON_ID >= 0) {
+    //   if(RobotMap.PIGEON_ON_CAN) {
+    //     pidgey = new PigeonIMU(RobotMap.PIGEON_ID);
+    //   } else {
+    //     pidgey = new PigeonIMU(Robot.getTalon(RobotMap.PIGEON_ID));
+    //   }
+    // }
 
     try {
       ahrs = new AHRS(Port.kMXP);
@@ -99,31 +101,34 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
       ahrs = null;
     }
 
-    if(Constants.PIGEON_DEFAULT && pidgey != null) {
-      usingPidgey = true;
-    } else {
-      usingPidgey = false;
-    }
+    usingPidgey = false;
+
+    // if(Constants.PIGEON_DEFAULT && pidgey != null) {
+    //   usingPidgey = true;
+    // } else {
+    //   usingPidgey = false;
+    // }
 
     zeroYaw();
+    previousYaw = getYaw();
 
-    if(usingPidgey) {
-      if(RobotMap.PIGEON_ON_CAN) {
-        lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
-        rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
-      } else {
-        lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
-        rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
-      }
-      if(Constants.PIGEON_REMOTE_INDEX == 0) {
-        lMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
-        rMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
-      } else {
-        lMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
-        rMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
-      }
-      lMaster.configSelectedFeedbackCoefficient(Constants.PIGEON_UNITS2DEGREES);
-    }
+    // if(usingPidgey) {
+    //   if(RobotMap.PIGEON_ON_CAN) {
+    //     lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+    //     rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.Pigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+    //   } else {
+    //     lMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+    //     rMaster.configRemoteFeedbackFilter(pidgey.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw, Constants.PIGEON_REMOTE_INDEX);
+    //   }
+    //   if(Constants.PIGEON_REMOTE_INDEX == 0) {
+    //     lMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
+    //     rMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
+    //   } else {
+    //     lMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
+    //     rMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, Constants.TURN_PID_INDEX, Constants.kTimeoutMs);
+    //   }
+    //   lMaster.configSelectedFeedbackCoefficient(Constants.PIGEON_UNITS2DEGREES);
+    // }
     
     pidController = new PIDController(0, 0, 0, 0, this, this, 0.02);
     pidSourceType = PIDSourceType.kDisplacement;
@@ -176,13 +181,42 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
 
   public void drive(double throttle, double turn) {
     boolean isQuickTurn;
+    // if((throttle > 0 && throttle-previousThrottle > 0.08) || (throttle < 0 && previousThrottle-throttle > 0.08) || rampingTimeout < System.currentTimeMillis()) {
+    //   if(ramping) {
+    //     ramping = false;
+    //     rampingTimeout = System.currentTimeMillis() + 1000;
+    //     lMaster.configOpenloopRamp(0, Constants.kTimeoutMs);
+    //     rMaster.configOpenloopRamp(0, Constants.kTimeoutMs);
+    //   }
+    // } else {
+    //   if(!ramping) {
+    //     ramping = true;
+    //     lMaster.configOpenloopRamp(0.1, Constants.kTimeoutMs);
+    //     rMaster.configOpenloopRamp(0.1, Constants.kTimeoutMs);
+    //   }
+    // }
+    // previousThrottle = throttle;
     if (Math.abs(throttle) < Math.abs(Constants.DEADBAND)) throttle = 0;
     if (Math.abs(turn) < Math.abs(Constants.DEADBAND)) turn = 0;
     if(drivemode == Drivemode.percentOutputTurnControl) {
       pidController.setSetpoint(turn);
-      previousThrottle = throttle;
     }
     setMotors(throttle,turn);
+  }
+
+  public void straightDrive(double throttle) {
+    double fix = 0.05;
+    System.out.println(getYaw()-previousYaw);
+    fix = fix*(getYaw()-previousYaw);
+    setMotors(throttle, fix);
+  }
+
+  public void setTargetYaw(double target) {
+    previousYaw = target;
+  }
+
+  public double getTargetYaw() {
+    return previousYaw;
   }
 
   public void drive(DriveSignal driveSignal) {
@@ -349,13 +383,20 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   }
 
   public double getYaw() {
-    if(Constants.PIGEON_DEFAULT && pidgey != null) {
-      double[] ypr = new double[3];
-      pidgey.getYawPitchRoll(ypr);
-      return ypr[0]*Constants.PIGEON_UNITS2DEGREES;
-    }
+    // if(Constants.PIGEON_DEFAULT && pidgey != null) {
+    //   double[] ypr = new double[3];
+    //   pidgey.getYawPitchRoll(ypr);
+    //   return ypr[0]*Constants.PIGEON_UNITS2DEGREES;
+    // }
     if(ahrs != null) {
       return (double)ahrs.getYaw()*Constants.NAVX_UNITS2DEGREES;
+    }
+    return 0;
+  }
+
+  public double getRoll() {
+    if (ahrs!= null) {
+      return (double)ahrs.getRoll();
     }
     return 0;
   }
@@ -386,7 +427,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   }
 
   public void testMotor(double speed) {
-    // rFront.set(speed);
+    rBack.set(speed);
   }
 
   @Override

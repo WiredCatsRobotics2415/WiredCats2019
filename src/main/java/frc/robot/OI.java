@@ -19,10 +19,10 @@ public class OI {
 
     //Elevator
     public boolean getElevatorUp() {
-        return gamepad.getPOV() == 90;
+        return gamepad.getPOV() == 270;
     }
     public boolean getElevatorDown() {
-        return gamepad.getPOV() == 270;
+        return gamepad.getPOV() == 90;
     }
 
     //Hatch Maniupulator
@@ -59,5 +59,9 @@ public class OI {
 
     public boolean getButtonPressed(int button) {
         return gamepad.getRawButtonPressed(button);
+    }
+
+    public boolean getButton(int button) {
+        return gamepad.getRawButton(button);
     }
 }

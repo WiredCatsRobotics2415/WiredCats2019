@@ -25,6 +25,10 @@ public class Endgame extends Subsystem {
     endgameSolenoid = new DoubleSolenoid(RobotMap.PCM_ID, RobotMap.CLIMB_PISTON_1, RobotMap.CLIMB_PISTON_2);
   }
 
+  // public Value endgameValue() {
+  //   return kForward;
+  // }
+
   public void flipOut() {
     // lSwitch.set(Value.kForward);
     endgameSolenoid.set(Value.kForward);
