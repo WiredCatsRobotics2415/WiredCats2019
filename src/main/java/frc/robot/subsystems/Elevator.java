@@ -57,8 +57,8 @@ public class Elevator extends Subsystem {
 
     elevMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
   
-    elevOne.setNeutralMode(NeutralMode.Brake);
-    elevOne.set(ControlMode.PercentOutput, 0);
+    elevMaster.setNeutralMode(NeutralMode.Brake);
+    elevMaster.set(ControlMode.PercentOutput, 0);
 
   }
 
@@ -79,7 +79,7 @@ public class Elevator extends Subsystem {
   }
 
   public void testElev(double speed) {
-    elevFour.set(speed);
+    elevOne.set(speed);
   }
 
   public void printCurrent() {
@@ -98,19 +98,19 @@ public class Elevator extends Subsystem {
   }
 
   public void liftUp() {
-    elevMaster.set(0.75);
+    setElevMotors(0.75);
   }
 
   public void lowerDown() {
-    elevMaster.set(-0.75);
+    setElevMotors(-0.75);
   }
 
   public void endgameLower() {
-    elevMaster.set(-0.9);
+    setElevMotors(-0.9);
   }
 
   public void stop() {
-    elevMaster.set(0);
+    setElevMotors(0);
   }
 
   public void shift() {

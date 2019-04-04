@@ -140,7 +140,7 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
     // compressor.start();
     compressor.setClosedLoopControl(true);
-    compressor.stop();
+    // compressor.stop();
 
     limelight.setLedMode(LightMode.eOff);
     limelightOn = false;
