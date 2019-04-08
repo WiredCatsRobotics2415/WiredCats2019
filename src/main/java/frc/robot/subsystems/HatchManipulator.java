@@ -28,7 +28,7 @@ public class HatchManipulator extends Subsystem {
   }
 
   public boolean isOut() {
-    if (extendyBoi.get() == Value.kForward) {
+    if (extendyBoi.get() == Value.kReverse) {
       return true;
     } else {
       return false;
@@ -48,11 +48,11 @@ public class HatchManipulator extends Subsystem {
   }
 
   public void extend() {
-    extendyBoi.set(Value.kForward);
+    extendyBoi.set(Value.kReverse);
   }
 
   public void retract() {
-    extendyBoi.set(Value.kReverse);
+    extendyBoi.set(Value.kForward);
   }
 
   public void extendToggle() {

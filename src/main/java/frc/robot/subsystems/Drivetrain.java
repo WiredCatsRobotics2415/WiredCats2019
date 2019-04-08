@@ -77,8 +77,8 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     rMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
     rMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 
-    lMaster.configOpenloopRamp(0.1, Constants.kTimeoutMs);
-    rMaster.configOpenloopRamp(0.1, Constants.kTimeoutMs);
+    lMaster.configOpenloopRamp(0, Constants.kTimeoutMs);
+    rMaster.configOpenloopRamp(0, Constants.kTimeoutMs);
     ramping = true;
     rampingTimeout = 0;
 
@@ -129,6 +129,14 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     //   }
     //   lMaster.configSelectedFeedbackCoefficient(Constants.PIGEON_UNITS2DEGREES);
     // }
+
+    lMaster.configContinuousCurrentLimit(50, 10);
+    lMaster.configPeakCurrentLimit(0, 10);
+    lMaster.enableCurrentLimit(true);
+
+    rMaster.configContinuousCurrentLimit(50, 10);
+    rMaster.configPeakCurrentLimit(0, 10);
+    rMaster.enableCurrentLimit(true);
     
     pidController = new PIDController(0, 0, 0, 0, this, this, 0.02);
     pidSourceType = PIDSourceType.kDisplacement;
@@ -140,8 +148,8 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   public void setMotors(double throttle, double turn) {
     switch(drivemode) {
       case percentOutput:
-        lMaster.set(ControlMode.PercentOutput, throttle+turn);
-        rMaster.set(ControlMode.PercentOutput, throttle-turn);
+        lMaster.set(ControlMode.PercentOutput, throttle+turn); //throttle+turn
+        rMaster.set(ControlMode.PercentOutput, throttle-turn); //throttle-turn
         break;
       case velocity:
         lMaster.set(ControlMode.Velocity, (throttle+turn)*Constants.DRIVETRAIN_MAX_SPEED);
@@ -162,6 +170,11 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
     }
   }
 
+  public void dirDrive(double left, double right) {
+    lMaster.set(ControlMode.PercentOutput, left);
+    rMaster.set(ControlMode.PercentOutput, right);
+  }
+
   public void setMotorsInd(double left, double right) {
     switch(drivemode) {
       case percentOutput:
@@ -180,28 +193,15 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   }
 
   public void drive(double throttle, double turn) {
-    boolean isQuickTurn;
-    // if((throttle > 0 && throttle-previousThrottle > 0.08) || (throttle < 0 && previousThrottle-throttle > 0.08) || rampingTimeout < System.currentTimeMillis()) {
-    //   if(ramping) {
-    //     ramping = false;
-    //     rampingTimeout = System.currentTimeMillis() + 1000;
-    //     lMaster.configOpenloopRamp(0, Constants.kTimeoutMs);
-    //     rMaster.configOpenloopRamp(0, Constants.kTimeoutMs);
-    //   }
-    // } else {
-    //   if(!ramping) {
-    //     ramping = true;
-    //     lMaster.configOpenloopRamp(0.1, Constants.kTimeoutMs);
-    //     rMaster.configOpenloopRamp(0.1, Constants.kTimeoutMs);
-    //   }
-    // }
-    // previousThrottle = throttle;
     if (Math.abs(throttle) < Math.abs(Constants.DEADBAND)) throttle = 0;
     if (Math.abs(turn) < Math.abs(Constants.DEADBAND)) turn = 0;
     if(drivemode == Drivemode.percentOutputTurnControl) {
       pidController.setSetpoint(turn);
     }
-    setMotors(throttle,turn);
+    lMaster.set(ControlMode.PercentOutput, throttle+turn); //throttle+turn
+    // lFront.set(ControlMode.PercentOutput, throttle+turn);
+    // rBack.set(ControlMode.PercentOutput, throttle-turn); //throttle-turn
+    rMaster.set(ControlMode.PercentOutput, throttle-turn);
   }
 
   public void straightDrive(double throttle) {
@@ -427,7 +427,7 @@ public class Drivetrain extends Subsystem implements PIDTunable, PIDSource, PIDO
   }
 
   public void testMotor(double speed) {
-    rBack.set(speed);
+    lBack.set(speed);
   }
 
   @Override

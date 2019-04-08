@@ -198,7 +198,7 @@ public class Robot extends TimedRobot {
     // intakeRotator.setBrakeMode(true);
 
     elevator.setBrakeMode(true);
-    // endgame.flipIn();
+    endgame.flipIn();
     drivetrain.setBrakeMode(true);
     endgameOn = false;
     limelight.setLedMode(LightMode.eOff);
@@ -252,27 +252,62 @@ public class Robot extends TimedRobot {
     //   controllerDrivetrain();
     // }    
     controllerDrivetrain();
-    // controllerHatchMan();
+    controllerHatchMan();
     // controllerIntake();
-    // controllerIntakeRotator();
+    controllerIntakeRotator();
     controllerEndgame();
     controllerElevator();
 
-    if (oi.getButton(1)) {
-      drivetrain.printCurrent();
-      System.out.println();
-    }
+    // System.out.println("EXT: " + hatchManip.isOut());
+    // System.out.println("STR: " + hatchManip.isStretched());
     
   }
 
   private void controllerDrivetrain() {
+    boolean quickTurn;
+
     double throttle, turn;
     throttle = oi.getDriveThrottle();
     turn = oi.getDriveTurn();
 
+    // if (Math.abs(throttle) < 0.25 && Math.abs(turn) > 0.3) {
+    //   quickTurn = true;
+    // } else {
+    //   quickTurn = false;
+    // }
+
+    // if (!quickTurn) {
+    //   turn = 0.8*turn;
+    // }
+
+    // double left, right;
+
+    // left = throttle+turn;
+    // right = throttle-turn;
+
+    // if (left > 1.0) {
+    //   right -= 0.8 * (left - 1);
+    //   left = 1;
+    // } else if (right > 1.0) {
+    //   left -= 0.8 * (right - 1);
+    //   right = 1;
+    // } else if (left < -1.0) {
+    //   right += 0.8 * (-1 - left);
+    //   left = -1;
+    // } else if (right < -1.0) {
+    //   left += 0.8 * (-1 - right);
+    //   right = -1;
+    // }
+
+    // drivetrain.dirDrive(left, right);
+
     limelight.setLedMode(LightMode.eOff);
 
     drivetrain.drive(throttle, turn);
+
+    if (oi.getButton(4)) {
+      drivetrain.printCurrent();
+    }
 
     //drivetrain.drive(cheesyDriveHelpl[er.cheesyDrive(leftY, rightX, isQuickTurn, false));  
     
@@ -395,12 +430,13 @@ public class Robot extends TimedRobot {
   }
 
   private void controllerHatchMan() {
-    if (oi.getHatchExtendToggle() && !hatchManip.isStretched()) {//left joystick 
+    if (oi.getHatchExtendToggle() && !hatchManip.isStretched()) {//left joystick  
       hatchManip.extendToggle();
     }
-    if (oi.getHatchStretchToggle() && hatchManip.isOut()) { // right joystick 
+    if (oi.getHatchStretchToggle()) { // right joystick 
       hatchManip.stretchToggle();
     }
+    // System.out.println("EXT: " + hatchManip.isOut());
   }
 
   public static WPI_TalonSRX getTalon(int deviceNumber) {
@@ -417,11 +453,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    double leftY = -oi.getDriveThrottle();
+    double leftY = oi.getDriveThrottle();
     // drivetrain.setMotors(leftY, leftY);
     // endgame.testMotor(leftY);
     System.out.println(leftY);
-    elevator.testElev(leftY);
+    drivetrain.testMotor(leftY);
   }
 
   @Override
